@@ -1,0 +1,36 @@
+{
+  "name": "backbone-proxy",
+  "version": "0.0.1",
+  "author": "biril <alexlambiris@gmail.com>",
+  "description": "Model proxies for Backbone",
+  "contributors": [],
+  "main": "./backbone-proxy.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/biril/backbone-proxy"
+  },
+  "bugs": "https://github.com/biril/backbone-proxy/issues",
+  "license": "MIT",
+  "keywords": [
+    "backbone",
+    "model",
+    "proxy"
+  ],
+  "dependencies": {
+    "underscore": "1.5.x"
+  },
+  "devDependencies": {
+    "qunit": "0.7.x",
+    "jshint": "2.5.x"
+  },
+  "scripts": {
+    "test": "node ./test/testrunner.js",
+    "lint": "jshint --show-non-errors backbone-proxy.js test/testrunner.js"
+  },
+  "engines": {
+    "node": ">=0.8"
+  },
+  "directories": {
+    "test": "test"
+  }
+}

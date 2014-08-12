@@ -1,0 +1,28 @@
+{
+  "name": "backbone-proxy",
+  "main": "backbone-proxy.js",
+  "version": "0.0.1",
+  "homepage": "https://github.com/biril/backbone-proxy",
+  "authors": [
+    "biril <alexlambiris@gmail.com>"
+  ],
+  "description": "Model proxies for Backbone",
+  "keywords": [
+    "backbone",
+    "model",
+    "proxy"
+  ],
+  "dependencies": {
+    "underscore": "1.5.x"
+  },
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules/",
+    "bower_components/",
+    "test/",
+    "examples/",
+    "Makefile",
+    "package.json"
+  ]
+}
