@@ -1,21 +1,16 @@
-/*global BackboneProxy, _, QUnit, test, ok, strictEqual, deepEqual, expect, Backbone */
+/*global Backbone, BackboneProxy, _, QUnit, test, ok, strictEqual */
 (function () {
   'use strict';
 
-  // var proxied, proxy;
-
   QUnit.module('use case', {
-    setup: function () {
-      // proxied = new Backbone.Model({ name: 'Anna' });
-      // proxy = backboneProxy.proxy(proxied);
-    },
+    setup: function () {}
   });
 
-  test('overriding the .set() method for logging', 5, function () {
+  test('logging proxy', 5, function () {
     var logger, proxied, Proxy, proxy;
     logger = { log: function () {} };
     proxied = new Backbone.Model({
-      name: 'Anna',
+      name: 'Anna'
     });
     Proxy = BackboneProxy.extend(proxied);
     proxy = new Proxy();
