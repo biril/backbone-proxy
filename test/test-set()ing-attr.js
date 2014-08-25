@@ -54,6 +54,8 @@
         strictEqual(target.get('name'), undefined);
       }));
 
+      ///
+
       test(sourceKey + '.set() should invoke change:attr-event listener on ' + targetKey, 1, s(function () {
         target.on('change:name', function () {
           ok(true);
@@ -61,11 +63,25 @@
         source.set({ name: 'Betty' });
       }));
 
+      test(sourceKey + '.unset() should invoke change:attr-event listener on ' + targetKey, 1, s(function () {
+        target.on('change:name', function () {
+          ok(true);
+        });
+        source.unset('name');
+      }));
+
       test(sourceKey + '.set() should invoke change-event listener on ' + targetKey, 1, s(function () {
         target.on('change', function () {
           ok(true);
         });
         source.set({ name: 'Betty' });
+      }));
+
+      test(sourceKey + '.unset() should invoke change-event listener on ' + targetKey, 1, s(function () {
+        target.on('change', function () {
+          ok(true);
+        });
+        source.unset('name');
       }));
 
       test(sourceKey + '.set() should twice-invoke all-event listener on ' + targetKey, 2, s(function () {
@@ -86,6 +102,24 @@
         ok(invokedForChangeAttr, 'invoked for change:attr-event');
       }));
 
+      test(sourceKey + '.unset() should twice-invoke all-event listener on ' + targetKey, 2, s(function () {
+        var invokedForChange, invokedForChangeAttr;
+
+        target.on('all', function (event) {
+          if (event === 'change') {
+            invokedForChange = true;
+          }
+          if (event === 'change:name') {
+            invokedForChangeAttr = true;
+          }
+        });
+
+        source.unset('name');
+
+        ok(invokedForChange,     'invoked for change-event');
+        ok(invokedForChangeAttr, 'invoked for change:attr-event');
+      }));
+
       ///
 
       test(sourceKey + '.set() should invoke change:attr-event listener on ' + targetKey + ', with context = ' + targetKey + ' (if no context given)', 1, s(function () {
@@ -95,6 +129,13 @@
         source.set({ name: 'Betty' });
       }));
 
+      test(sourceKey + '.unset() should invoke change:attr-event listener on ' + targetKey + ', with context = ' + targetKey + ' (if no context given)', 1, s(function () {
+        target.on('change:name', function () {
+          strictEqual(this, target);
+        });
+        source.unset('name');
+      }));
+
       test(sourceKey + '.set() should invoke change-event listener on ' + targetKey + ', with context = ' + targetKey + ' (if no context given)', 1, s(function () {
         target.on('change', function () {
           strictEqual(this, target);
@@ -102,11 +143,25 @@
         source.set({ name: 'Betty' });
       }));
 
+      test(sourceKey + '.unset() should invoke change-event listener on ' + targetKey + ', with context = ' + targetKey + ' (if no context given)', 1, s(function () {
+        target.on('change', function () {
+          strictEqual(this, target);
+        });
+        source.unset('name');
+      }));
+
       test(sourceKey + '.set() should twice-invoke all-event listener on ' + targetKey + ', with context = ' + targetKey + ' (if no context given)', 2, s(function () {
         target.on('all', function () {
           strictEqual(this, target);
         });
         source.set({ name: 'Betty' });
+      }));
+
+      test(sourceKey + '.unset() should twice-invoke all-event listener on ' + targetKey + ', with context = ' + targetKey + ' (if no context given)', 2, s(function () {
+        target.on('all', function () {
+          strictEqual(this, target);
+        });
+        source.unset('name');
       }));
 
       ///
@@ -119,6 +174,14 @@
         source.set({ name: 'Betty' });
       }));
 
+      test(sourceKey + '.unset() should invoke change:attr-event listener on ' + targetKey + ', with given context', 1, s(function () {
+        var context = {};
+        target.on('change:name', function () {
+          strictEqual(this, context);
+        }, context);
+        source.unset('name');
+      }));
+
       test(sourceKey + '.set() should invoke change-event listener on ' + targetKey + ', with given context', 1, s(function () {
         var context = {};
         target.on('change', function () {
@@ -127,12 +190,28 @@
         source.set({ name: 'Betty' });
       }));
 
+      test(sourceKey + '.unset() should invoke change-event listener on ' + targetKey + ', with given context', 1, s(function () {
+        var context = {};
+        target.on('change', function () {
+          strictEqual(this, context);
+        }, context);
+        source.unset('name');
+      }));
+
       test(sourceKey + '.set() should twice-invoke all-event listener on ' + targetKey + ', with given context', 2, s(function () {
         var context = {};
         target.on('all', function () {
           strictEqual(this, context);
         }, context);
         source.set({ name: 'Betty' });
+      }));
+
+      test(sourceKey + '.unset() should twice-invoke all-event listener on ' + targetKey + ', with given context', 2, s(function () {
+        var context = {};
+        target.on('all', function () {
+          strictEqual(this, context);
+        }, context);
+        source.unset('name');
       }));
 
       ///
@@ -144,6 +223,13 @@
         source.set({ name: 'Betty' });
       }));
 
+      test(sourceKey + '.unset() should invoke change:attr-event listener on ' + targetKey + ', with model param = ' + targetKey, 1, s(function () {
+        target.on('change:name', function (model) {
+          strictEqual(model, target);
+        });
+        source.unset('name');
+      }));
+
       test(sourceKey + '.set() should invoke change-event listener on ' + targetKey + ', with model param = ' + targetKey, 1, s(function () {
         target.on('change', function (model) {
           strictEqual(model, target);
@@ -151,11 +237,25 @@
         source.set({ name: 'Betty' });
       }));
 
+      test(sourceKey + '.unset() should invoke change-event listener on ' + targetKey + ', with model param = ' + targetKey, 1, s(function () {
+        target.on('change', function (model) {
+          strictEqual(model, target);
+        });
+        source.unset('name');
+      }));
+
       test(sourceKey + '.set() should twice-invoke all-event listener on ' + targetKey + ', with model param = ' + targetKey, 2, s(function () {
         target.on('all', function (__, model) {
           strictEqual(model, target);
         });
         source.set({ name: 'Betty' });
+      }));
+
+      test(sourceKey + '.unset() should twice-invoke all-event listener on ' + targetKey + ', with model param = ' + targetKey, 2, s(function () {
+        target.on('all', function (__, model) {
+          strictEqual(model, target);
+        });
+        source.unset('name');
       }));
 
     });
