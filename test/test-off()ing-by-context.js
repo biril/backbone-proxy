@@ -1,12 +1,16 @@
-/*global BackboneProxy, _, QUnit, test, ok, strictEqual, deepEqual, expect, Backbone */
+/*global Backbone, BackboneProxy, _, QUnit, test, ok */
 (function () {
   'use strict';
 
+  QUnit.module('.off()ing by context', {
+    setup: function () {},
+  });
+
   var
 
-    proxied, proxy, proxy2, proxyProxy, models, source, target,
+    proxied, proxy, proxy2, proxyProxy, models, targetModel, otherModel,
 
-    setup = function (sourceKey, targetKey) {
+    setup = function (tM, oM) {
       var Proxy, ProxyProxy;
 
       proxied    = new Backbone.Model({ name: 'Anna' });
@@ -25,70 +29,66 @@
         proxyProxy: proxyProxy
       };
 
-      source = models[sourceKey];
-      target = models[targetKey];
+      tM && (targetModel = models[tM]);
+      oM && (otherModel  = models[oM]);
     },
 
-    s = function (sourceKey, targetKey, expect) {
+    s = function (tM, oM, expect) {
       return function () {
-        setup(sourceKey, targetKey);
+        setup(tM, oM);
         expect();
       };
     };
 
-  QUnit.module('.off()ing by context', {
-    setup: function () {},
-  });
+  _(['proxied', 'proxy', 'proxy2', 'proxyProxy']).each(function (tM) {
 
-  _(['proxied', 'proxy', 'proxy2', 'proxyProxy']).each(function (sk) {
-
-    _(['proxied', 'proxy', 'proxy2', 'proxyProxy']).each(function (tk) {
+    _(['proxied', 'proxy', 'proxy2', 'proxyProxy']).each(function (oM) {
 
       // Registering listener on some model - removing from another (different) model
-      if (sk !== tk) {
+      if (tM !== oM) {
 
-        test(tk + '.off(null, null, context) should not remove change:attr-event-listener registered on ' + sk, 1, s(sk, tk, function () {
+        test(tM + '.off(null, null, context) should not remove change:attr-event-listener registered on ' + oM, 1, s(tM, oM, function () {
           var context = {};
-          source.on('change:name', function () {
+          otherModel.on('change:name', function () {
             ok(true);
           }, context);
-          target.off(null, null, context);
+          targetModel.off(null, null, context);
 
-          target.set({ name: 'Betty' }); // or source.set - makes no difference
+          targetModel.set({ name: 'Betty' }); // or otherModel.set - should make no difference
         }));
 
-        test(tk + '.off(null, null, context) should not remove change:attr-event-listener registered on ' + sk + ', for context = ' + sk, 1, s(sk, tk, function () {
-          source.on('change:name', function () {
+        test(tM + '.off(null, null, context) should not remove change:attr-event-listener registered on ' + oM + ', for context = ' + oM, 1, s(tM, oM, function () {
+          otherModel.on('change:name', function () {
             ok(true);
-          }, source);
-          target.off(null, null, source);
+          }, otherModel);
+          targetModel.off(null, null, otherModel);
 
-          target.set({ name: 'Betty' }); // or source.set - makes no difference
+          targetModel.set({ name: 'Betty' }); // or otherModel.set - should make no difference
         }));
 
-        test(tk + '.off(null, null, context) should not remove change:attr-event-listener registered on ' + sk + ', for context = ' + tk, 1, s(sk, tk, function () {
-          source.on('change:name', function () {
+        test(tM + '.off(null, null, context) should not remove change:attr-event-listener registered on ' + oM + ', for context = ' + tM, 1, s(tM, oM, function () {
+          otherModel.on('change:name', function () {
             ok(true);
-          }, target);
-          target.off(null, null, target);
+          }, targetModel);
+          targetModel.off(null, null, targetModel);
 
-          target.set({ name: 'Betty' }); // or source.set - makes no difference
+          targetModel.set({ name: 'Betty' }); // or otherModel.set - should make no difference
         }));
 
-      }
+      } // if target-model != other-model
 
-    }); // iterate over targets
+    }); // for every other-model in ['proxied', 'proxy', 'proxy2', 'proxyProxy']
 
-    test(sk + '.off(null, null, context) should remove change:attr-event-listener registered on ' + sk, 0, s(sk, sk, function () {
+    test(tM + '.off(null, null, context) should remove change:attr-event-listener registered on ' + tM, 0, s(tM, null, function () {
       var context = {};
-      source.on('change:name', function () {
-        ok(false, 'change:name listener on ' + sk + ' should not be invoked');
+      targetModel.on('change:name', function () {
+        ok(false, 'change:name listener on ' + tM + ' should not be invoked');
       }, context);
-      source.off(null, null, context);
+      targetModel.off(null, null, context);
 
-      source.set({ name: 'Betty' });
+      targetModel.set({ name: 'Betty' });
     }));
 
-  }); // iterate over sources
+  }); // for every target-model in ['proxied', 'proxy', 'proxy2', 'proxyProxy']
 
 }());

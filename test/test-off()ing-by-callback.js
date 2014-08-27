@@ -1,12 +1,16 @@
-/*global BackboneProxy, _, QUnit, test, ok, strictEqual, deepEqual, expect, Backbone */
+/*global Backbone, BackboneProxy, _, QUnit, test, ok */
 (function () {
   'use strict';
 
+  QUnit.module('.off()ing by callback', {
+    setup: function () {},
+  });
+
   var
 
-    proxied, proxy, proxy2, proxyProxy, models, source, target,
+    proxied, proxy, proxy2, proxyProxy, models, targetModel, otherModel,
 
-    setup = function (sourceKey, targetKey) {
+    setup = function (tM, oM) {
       var Proxy, ProxyProxy;
 
       proxied    = new Backbone.Model({ name: 'Anna' });
@@ -25,52 +29,48 @@
         proxyProxy: proxyProxy
       };
 
-      source = models[sourceKey];
-      target = models[targetKey];
+      tM && (targetModel = models[tM]);
+      oM && (otherModel  = models[oM]);
     },
 
-    s = function (sourceKey, targetKey, expect) {
+    s = function (tM, oM, expect) {
       return function () {
-        setup(sourceKey, targetKey);
+        setup(tM, oM);
         expect();
       };
     };
 
-  QUnit.module('.off()ing by callback', {
-    setup: function () {},
-  });
+  _(['proxied', 'proxy', 'proxy2', 'proxyProxy']).each(function (tM) {
 
-  _(['proxied', 'proxy', 'proxy2', 'proxyProxy']).each(function (sk) {
-
-    _(['proxied', 'proxy', 'proxy2', 'proxyProxy']).each(function (tk) {
+    _(['proxied', 'proxy', 'proxy2', 'proxyProxy']).each(function (oM) {
 
       // Registering listener on some model - removing from another (different) model
-      if (sk !== tk) {
+      if (tM !== oM) {
 
-        test(tk + '.off(null, callback) should not remove change:attr-event-listener registered on ' + sk, 1, s(sk, tk, function () {
+        test(tM + '.off(null, callback) should not remove change:attr-event-listener registered on ' + oM, 1, s(tM, oM, function () {
           var callback = function () {
               ok(true);
             };
-          source.on('change:name', callback);
-          target.off(null, callback);
+          otherModel.on('change:name', callback);
+          targetModel.off(null, callback);
 
-          target.set({ name: 'Betty' }); // or source.set - makes no difference
+          targetModel.set({ name: 'Betty' }); // or otherModel.set - should make no difference
         }));
 
       }
 
-    }); // iterate over targets
+    }); // for every other-model in ['proxied', 'proxy', 'proxy2', 'proxyProxy']
 
-    test(sk + '.off(null, callback) should remove change:attr-event-listener registered on ' + sk, 0, s(sk, sk, function () {
+    test(tM + '.off(null, callback) should remove change:attr-event-listener registered on ' + tM, 0, s(tM, null, function () {
       var callback = function () {
-          ok(false, 'change:name listener on ' + sk + ' should not be invoked');
+          ok(false, 'change:name listener on ' + tM + ' should not be invoked');
         };
-      source.on('change:name', callback);
-      source.off(null, callback);
+      targetModel.on('change:name', callback);
+      targetModel.off(null, callback);
 
-      source.set({ name: 'Betty' });
+      targetModel.set({ name: 'Betty' });
     }));
 
-  }); // iterate over sources
+  }); // for every target-model in ['proxied', 'proxy', 'proxy2', 'proxyProxy']
 
 }());
