@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  QUnit.module('querying changed attrs', {
+  QUnit.module('query changed attrs', {
     setup: function () {},
   });
 

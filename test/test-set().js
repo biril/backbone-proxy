@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  QUnit.module('.set()ing attr', {
+  QUnit.module('.set()', {
     setup: function () {},
   });
 

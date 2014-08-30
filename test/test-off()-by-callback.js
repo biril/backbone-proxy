@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  QUnit.module('.off()ing by callback', {
+  QUnit.module('.off() by callback', {
     setup: function () {},
   });
 

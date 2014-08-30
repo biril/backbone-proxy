@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  QUnit.module('.off()ing by context', {
+  QUnit.module('.off() by context', {
     setup: function () {},
   });
 

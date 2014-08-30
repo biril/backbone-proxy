@@ -25,10 +25,11 @@ qunit.run({
     absPath('test-model-api.js'),
     absPath('test-model-overridables.js'),
     absPath('test-use-case.js'),
-    absPath('test-set()ing-attr.js'),
-    absPath('test-off()ing-by-event.js'),
-    absPath('test-off()ing-by-callback.js'),
-    absPath('test-off()ing-by-context.js')
+    absPath('test-set().js'),
+    absPath('test-off()-by-event.js'),
+    absPath('test-off()-by-callback.js'),
+    absPath('test-off()-by-context.js'),
+    absPath('test-query-changed-attrs.js')
   ]
 }, function (error, stats) {
   if (error) {

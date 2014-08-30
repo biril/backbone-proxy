@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  QUnit.module('.off()ing by event', {
+  QUnit.module('.off() by event', {
     setup: function () {},
   });
 
