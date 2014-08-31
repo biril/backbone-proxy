@@ -26,6 +26,7 @@ qunit.run({
     absPath('test-model-overridables.js'),
     absPath('test-use-case.js'),
     absPath('test-set().js'),
+    absPath('test-on().js'),
     absPath('test-off()-by-event.js'),
     absPath('test-off()-by-callback.js'),
     absPath('test-off()-by-context.js'),
