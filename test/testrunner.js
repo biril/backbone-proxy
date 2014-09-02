@@ -30,7 +30,8 @@ qunit.run({
     absPath('test-off()-by-event.js'),
     absPath('test-off()-by-callback.js'),
     absPath('test-off()-by-context.js'),
-    absPath('test-query-changed-attrs.js')
+    absPath('test-query-changed-attrs.js'),
+    absPath('test-housekeeping.js')
   ]
 }, function (error, stats) {
   if (error) {
