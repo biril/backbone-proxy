@@ -22,7 +22,6 @@ qunit.run({
     namespace: 'BackboneProxy'
   },
   tests: [
-    absPath('test-model-api.js'),
     absPath('test-model-overridables.js'),
     absPath('test-use-case.js'),
     absPath('test-set().js'),
