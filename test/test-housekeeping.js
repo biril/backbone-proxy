@@ -8,14 +8,14 @@
 
   var
 
-    subscriptionMapEntries = function (proxy) { return proxy._eventEngine._subscriptionMap._map; },
+    subscriptions = function (proxy) { return proxy._eventEngine._subscriptions._items; },
     isListeningToProxied = function (proxy) { return proxy._eventEngine._isListeningToProxied; },
-    hasSubscriptions = function (proxy) { return !!subscriptionMapEntries(proxy).length; },
+    hasSubscriptions = function (proxy) { return !!subscriptions(proxy).length; },
 
     //
 
     subscriptionsForCallback = function (callback, proxy) {
-      return _(subscriptionMapEntries(proxy)).filter(function (subscription) {
+      return _(subscriptions(proxy)).filter(function (subscription) {
         return subscription.callback === callback;
       });
     },
@@ -24,7 +24,7 @@
     },
 
     subscriptionsForContext = function (context, proxy) {
-      return _(subscriptionMapEntries(proxy)).filter(function (subscription) {
+      return _(subscriptions(proxy)).filter(function (subscription) {
         return subscription.context === context;
       });
     },
@@ -33,7 +33,7 @@
     },
 
     subscriptionsForEvent = function (event, proxy) {
-      return _(subscriptionMapEntries(proxy)).filter(function (subscription) {
+      return _(subscriptions(proxy)).filter(function (subscription) {
         return subscription.event === event;
       });
     },

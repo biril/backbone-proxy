@@ -75,56 +75,51 @@
 
 
     //
-    //   SubscriptionMap
-    // ===================
+    //   SubscriptionCollection
+    // ==========================
     //
 
-    SubscriptionMap = (function () {
+    SubscriptionCollection = (function () {
 
-      var SubscriptionMap = function SubscriptionMap () {
-          this._map = [];
+      var SubscriptionCollection = function SubscriptionCollection () {
+          this._items = [];
         };
 
-      SubscriptionMap.prototype = {
-        _markForUnstore: function (propName, propValue, toUnstore) {
-          if (!propValue) {
-            return toUnstore;
+      SubscriptionCollection.prototype = {
+        _markToKeep: function (propName, propValue) {
+          if (!propValue) { return; }
+          for (var i = this._items.length - 1; i >= 0; --i) {
+            this._items[i].keep = this._items[i][propName] !== propValue;
           }
-          for (var i = toUnstore.length - 1; i >= 0; --i) {
-            if (this._map[i][propName] !== propValue) {
-              toUnstore[i] = false;
-            }
-          }
-          return toUnstore;
         },
         store: function (event, callback, context, proxyCallback) {
-          this._map.push({
+          this._items.push({
             event: event,
             callback: callback,
-            proxyCallback: proxyCallback,
-            context: context
+            context: context,
+            proxyCallback: proxyCallback
           });
         },
         unstore: function (event, callback, context) {
-          var
-            toUnstore = _.range(this._map.length).map(function () { return true; }),
-            unstored = [], mapWithoutUnstored = [];
+          var itemsUnstored = [], itemsKept = [];
 
-          this._markForUnstore('event', event, toUnstore);
-          this._markForUnstore('callback', callback, toUnstore);
-          this._markForUnstore('context', context, toUnstore);
+          _(this._items).each(function (item) { item.keep = false; });
 
-          _(this._map).each(function (mappedEvent, i) {
-            (toUnstore[i] ? unstored : mapWithoutUnstored).push(mappedEvent);
-          });
+          this._markToKeep('event', event);
+          this._markToKeep('callback', callback);
+          this._markToKeep('context', context);
 
-          this._map = mapWithoutUnstored;
+          for (var i = this._items.length - 1; i >= 0; --i) {
+            (this._items[i].keep ? itemsKept : itemsUnstored).push(this._items[i]);
+          }
 
-          return unstored;
+          this._items = itemsKept;
+
+          return itemsUnstored;
         }
       };
 
-      return SubscriptionMap;
+      return SubscriptionCollection;
     }()),
 
 
@@ -165,7 +160,7 @@
       EventEngine = function EventEngine(proxy, proxied) {
         this._proxy = proxy;
         this._proxied = proxied;
-        this._subscriptionMap = new SubscriptionMap();
+        this._subscriptions = new SubscriptionCollection();
         this._isListeningToProxied = false;
         this._markerContext = {};
       };
@@ -197,13 +192,13 @@
 
         on: function (event, callback, context) {
           var proxyCallback = createProxyCallback(this._proxy, event, callback, context);
-          this._subscriptionMap.store(event, callback, context, proxyCallback);
+          this._subscriptions.store(event, callback, context, proxyCallback);
           Backbone.Events.on.call(this, event, proxyCallback, context);
           this.manageSubscriptionToProxied();
         },
 
         off: function (event, callback, context) {
-          var matchingSubscriptions = this._subscriptionMap.unstore(event, callback, context);
+          var matchingSubscriptions = this._subscriptions.unstore(event, callback, context);
           _(matchingSubscriptions).each(function (subscription) {
             Backbone.Events.off.call(this, subscription.event, subscription.proxyCallback, subscription.context);
           }, this);
