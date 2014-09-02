@@ -162,10 +162,11 @@
       },
 
       //
-      EventEngine = function EventEngine(proxy) {
+      EventEngine = function EventEngine(proxy, proxied) {
         this._proxy = proxy;
+        this._proxied = proxied;
         this._subscriptionMap = new SubscriptionMap();
-        this._isSubscribedToProxy = false;
+        this._isListeningToProxied = false;
         this._markerContext = {};
       };
 
@@ -180,24 +181,25 @@
           return false;
         },
 
-        manageSubscriptionToProxied: function (proxied) {
+        manageSubscriptionToProxied: function () {
           var hasEvents = this._hasEvents();
-          if (this._isSubscribedToProxy !== hasEvents) {
-              this._isSubscribedToProxy = hasEvents;
-              if (this._isSubscribedToProxy) {
-                proxied.on('all', _.bind(function () {
-                  Backbone.Events.trigger.apply(this, arguments);
-                }, this), this._markerContext);
-              } else {
-                proxied.off(null, null, this._markerContext);
-              }
+          if (this._isListeningToProxied !== hasEvents) {
+            if (hasEvents) {
+              this._proxied.on('all', _.bind(function () {
+                Backbone.Events.trigger.apply(this, arguments);
+              }, this), this._markerContext);
+            } else {
+              this._proxied.off(null, null, this._markerContext);
             }
+            this._isListeningToProxied = hasEvents;
+          }
         },
 
         on: function (event, callback, context) {
           var proxyCallback = createProxyCallback(this._proxy, event, callback, context);
           this._subscriptionMap.store(event, callback, context, proxyCallback);
           Backbone.Events.on.call(this, event, proxyCallback, context);
+          this.manageSubscriptionToProxied();
         },
 
         off: function (event, callback, context) {
@@ -205,6 +207,7 @@
           _(matchingSubscriptions).each(function (subscription) {
             Backbone.Events.off.call(this, subscription.event, subscription.proxyCallback, subscription.context);
           }, this);
+          this.manageSubscriptionToProxied();
         }
       });
 
@@ -227,7 +230,6 @@
         _(eventApiMethodNames).each(function (methodName) {
           this[methodName] = function () {
             this._eventEngine[methodName].apply(this._eventEngine, arguments);
-            this._eventEngine.manageSubscriptionToProxied(proxied);
             return this;
           };
         }, this);
@@ -289,8 +291,8 @@
       var ctor, ModelProxyProto;
 
       ctor = function ModelProxy() {
-        this._eventEngine = new EventEngine(this);
-       };
+        this._eventEngine = new EventEngine(this, proxied);
+      };
       ModelProxyProto = createModelProxyProtoForProxied(proxied);
       ctor.prototype = new ModelProxyProto();
       return ctor;
