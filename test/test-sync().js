@@ -49,6 +49,8 @@
 
     _(['proxied', 'proxy', 'proxy2', 'proxyProxy']).each(function (oM) { // other model
 
+      //// Should populate with received data:
+
       test(tM + '.fetch() should populate ' + oM + ' with received data', 1, s(tM, oM, function () {
         proxied.sync = function (method, model, options) { // Setting sync only effective on root-proxied
           options.success({
@@ -62,6 +64,34 @@
           }
         });
       }));
+
+      test(tM + '.save() for new model should populate ' + oM + ' with received data', 2, s(tM, oM, function () {
+        proxied.sync = function (method, model, options) { // Setting sync only effective on root-proxied
+          options.success(_(model.toJSON()).extend({ id: 1 }));
+        };
+
+        targetModel.save({ name: 'Betty' }, {
+          success: function () {
+            strictEqual(otherModel.get('name'), 'Betty', 'name attr is set on ' + oM);
+            ok(!otherModel.isNew(), oM + ' is not new after success handler invocation');
+          }
+        });
+      }));
+
+      test(tM + '.save() for non-new model should populate ' + oM + ' with received data', 1, s(tM, oM, function () {
+        proxied.sync = function (method, model, options) { // Setting sync only effective on root-proxied
+          options.success(model.toJSON());
+        };
+
+        targetModel.set({ id: 1 })
+        targetModel.save({ name: 'Betty' }, {
+          success: function () {
+            strictEqual(otherModel.get('name'), 'Betty');
+          }
+        });
+      }));
+
+      //// Should trigger request/sync with expected context
 
       test(tM + '.fetch() should trigger request/sync events on ' + oM + ', with expected context', 2, s(tM, oM, function () {
         proxied.sync = function (method, model, options) { // Setting sync only effective on root-proxied
@@ -80,6 +110,63 @@
         targetModel.fetch();
       }));
 
+      test(tM + '.save() for new model should trigger request/sync events on ' + oM + ', with expected context', 4, s(tM, oM, function () {
+        proxied.sync = function (method, model, options) { // Setting sync only effective on root-proxied
+          model.trigger('request', model, undefined, options); // The 'request' event is a concern of the sync method
+          options.success(_(model.toJSON()).extend({ id: 1 }));
+        };
+
+        otherModel.on('request', function () {
+          strictEqual(this, otherModel, 'context of request-event callback is ' + oM);
+          ok(otherModel.isNew(), oM + ' is new at request-event time');
+        });
+
+        otherModel.on('sync', function () {
+          strictEqual(this, otherModel, 'context of sync-event callback is ' + oM);
+          ok(!otherModel.isNew(), oM + ' is not new at sync-event time');
+        });
+
+        targetModel.save({ name: 'Betty' });
+      }));
+
+      test(tM + '.save() for non-new model should trigger request/sync events on ' + oM + ', with expected context', 2, s(tM, oM, function () {
+        proxied.sync = function (method, model, options) { // Setting sync only effective on root-proxied
+          model.trigger('request', model, undefined, options); // The 'request' event is a concern of the sync method
+          options.success(model.toJSON());
+        };
+
+        otherModel.on('request', function () {
+          strictEqual(this, otherModel, 'context of request-event callback is ' + oM);
+        });
+
+        otherModel.on('sync', function () {
+          strictEqual(this, otherModel, 'context of sync-event callback is ' + oM);
+        });
+
+        targetModel.set({ id: 1 });
+        targetModel.save({ name: 'Betty' });
+      }));
+
+      test(tM + '.destroy() for non-new model should trigger request/sync events on ' + oM + ', with expected context', 2, s(tM, oM, function () {
+        proxied.sync = function (method, model, options) { // Setting sync only effective on root-proxied
+          model.trigger('request', model, undefined, options); // The 'request' event is a concern of the sync method
+          options.success();
+        };
+
+        otherModel.on('request', function () {
+          strictEqual(this, otherModel, 'context of request-event callback is ' + oM);
+        });
+
+        otherModel.on('sync', function () {
+          strictEqual(this, otherModel, 'context of sync-event callback is ' + oM);
+        });
+
+        targetModel.set({ id: 1 });
+        targetModel.destroy();
+      }));
+
+      //// Should trigger request/sync with expected model parameter
+
       test(tM + '.fetch() should trigger request/sync events on ' + oM + ', with expected model parameter', 2, s(tM, oM, function () {
         proxied.sync = function (method, model, options) { // Setting sync only effective on root-proxied
           model.trigger('request', model, undefined, options); // The 'request' event is a concern of the sync method
@@ -95,6 +182,61 @@
         });
 
         targetModel.fetch();
+      }));
+
+      test(tM + '.save() for new model should trigger request/sync events on ' + oM + ', with expected model parameter', 4, s(tM, oM, function () {
+        proxied.sync = function (method, model, options) { // Setting sync only effective on root-proxied
+          model.trigger('request', model, undefined, options); // The 'request' event is a concern of the sync method
+          options.success(_(model.toJSON()).extend({ id: 1 }));
+        };
+
+        otherModel.on('request', function (model) {
+          strictEqual(model, otherModel, 'model parameter of request-event callback is ' + oM);
+          ok(model.isNew(), oM + ' is new at request-event time');
+        });
+
+        otherModel.on('sync', function (model) {
+          strictEqual(model, otherModel, 'model parameter of sync-event callback is ' + oM);
+          ok(!model.isNew(), oM + ' is not new at sync-event time');
+        });
+
+        targetModel.save({ name: 'Betty' });
+      }));
+
+      test(tM + '.save() for non-new model should trigger request/sync events on ' + oM + ', with expected model parameter', 2, s(tM, oM, function () {
+        proxied.sync = function (method, model, options) { // Setting sync only effective on root-proxied
+          model.trigger('request', model, undefined, options); // The 'request' event is a concern of the sync method
+          options.success(model.toJSON());
+        };
+
+        otherModel.on('request', function (model) {
+          strictEqual(model, otherModel, 'model parameter of request-event callback is ' + oM);
+        });
+
+        otherModel.on('sync', function (model) {
+          strictEqual(model, otherModel, 'model parameter of sync-event callback is ' + oM);
+        });
+
+        targetModel.set({ id: 1 });
+        targetModel.save({ name: 'Betty' });
+      }));
+
+      test(tM + '.destroy() for non-new model should trigger request/sync events on ' + oM + ', with expected model parameter', 2, s(tM, oM, function () {
+        proxied.sync = function (method, model, options) { // Setting sync only effective on root-proxied
+          model.trigger('request', model, undefined, options); // The 'request' event is a concern of the sync method
+          options.success();
+        };
+
+        otherModel.on('request', function (model) {
+          strictEqual(model, otherModel, 'model parameter of request-event callback is ' + oM);
+        });
+
+        otherModel.on('sync', function (model) {
+          strictEqual(model, otherModel, 'model parameter of sync-event callback is ' + oM);
+        });
+
+        targetModel.set({ id: 1 });
+        targetModel.destroy();
       }));
 
     }); // Iterate: other model = proxied', 'proxy', 'proxy2', 'proxyProxy'
@@ -141,12 +283,90 @@
       });
     }));
 
+    test(tM + '.save() with new model should invoke success function on ' + tM + ', with expected model parameter', 1, s(tM, function () {
+      proxied.sync = function (method, model, options) { // Setting sync only effective on root-proxied
+        options.success(_(model.toJSON()).extend({ id: 1 }));
+      };
+
+      targetModel.save({ name: 'Betty' }, {
+        success: function (model) {
+          strictEqual(model, targetModel);
+        }
+      });
+    }));
+
+    test(tM + '.save() with non-new model should invoke success function on ' + tM + ', with expected model parameter', 1, s(tM, function () {
+      proxied.sync = function (method, model, options) { // Setting sync only effective on root-proxied
+        options.success(model.toJSON());
+      };
+
+      targetModel.set({ id: 1 });
+      targetModel.save({ name: 'Betty' }, {
+        success: function (model) {
+          strictEqual(model, targetModel);
+        }
+      });
+    }));
+
+    test(tM + '.destroy() with non-new model should invoke success function on ' + tM + ', with expected model parameter', 1, s(tM, function () {
+      proxied.sync = function (method, model, options) { // Setting sync only effective on root-proxied
+        options.success();
+      };
+
+      targetModel.set({ id: 1 });
+      targetModel.destroy({
+        success: function (model) {
+          strictEqual(model, targetModel);
+        }
+      });
+    }));
+
+    ////
+
     test(tM + '.fetch() should invoke error function on ' + tM + ', with expected model parameter', 1, s(tM, function () {
       proxied.sync = function (method, model, options) { // Setting sync only effective on root-proxied
         options.error();
       };
 
       targetModel.fetch({
+        error: function (model) {
+          strictEqual(model, targetModel);
+        }
+      });
+    }));
+
+    test(tM + '.save() with new model should invoke error function on ' + tM + ', with expected model parameter', 1, s(tM, function () {
+      proxied.sync = function (method, model, options) { // Setting sync only effective on root-proxied
+        options.error();
+      };
+
+      targetModel.save({ name: 'Betty' }, {
+        error: function (model) {
+          strictEqual(model, targetModel);
+        }
+      });
+    }));
+
+    test(tM + '.save() with non-new model should invoke error function on ' + tM + ', with expected model parameter', 1, s(tM, function () {
+      proxied.sync = function (method, model, options) { // Setting sync only effective on root-proxied
+        options.error();
+      };
+
+      targetModel.set({ id: 1 });
+      targetModel.save({ name: 'Betty' }, {
+        error: function (model) {
+          strictEqual(model, targetModel);
+        }
+      });
+    }));
+
+    test(tM + '.destroy() with non-new model should invoke error function on ' + tM + ', with expected model parameter', 1, s(tM, function () {
+      proxied.sync = function (method, model, options) { // Setting sync only effective on root-proxied
+        options.error();
+      };
+
+      targetModel.set({ id: 1 });
+      targetModel.destroy({
         error: function (model) {
           strictEqual(model, targetModel);
         }
