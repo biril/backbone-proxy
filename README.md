@@ -5,10 +5,18 @@ Backbone Proxy
 [![NPM version](https://badge.fury.io/js/backbone-proxy.png)](http://badge.fury.io/js/backbone-proxy)
 [![Bower version](https://badge.fury.io/bo/backbone-proxy.png)](http://badge.fury.io/bo/backbone-proxy)
 
-Model proxies for Backbone. Implement custom behaviour per proxy while referencing the same, shared
-state.
+Model proxies for Backbone. Notably useful in applications where sharing a single model instance
+among many components (e.g. views) with different concerns is a common pattern. In such cases, the
+need for multiple components to reference the same model-encapsulated state prohibits the
+specialization of model-behaviour. Additionaly it leads to a design where 'all code is created
+equal', i.e. all components have the exact same priviledge-level in respect to data-access.
+BackboneProxy faciliates the creation of model-proxies that may be specialized in terms of
+behaviour while referencing the same, shared state.
 
-For example, create a proxy that logs all attribute changes:
+For example, you can create:
+
+
+#### Proxies that log attribute changes
 
 ```javascript
 // Create a UserProxy class. Instances will proxy the given user model
@@ -17,11 +25,10 @@ var UserProxy = BackboneProxy.extend(user);
 
 // Instantiate a logging proxy - a proxy that logs all invocations of .set
 var userWithLog = new UserProxy();
-userWithLog.set = function (key, val, options) {
-  // Log
+userWithLog.set = function (key, val) {
   console.log('setting ' + key + ' to ' + val + ' on user');
 
-  // Delegate the actual work to UserProxy implementation
+  // Delegate to UserProxy implementation
   UserProxy.prototype.set.apply(this, arguments);
 };
 
@@ -35,7 +42,8 @@ userWithLog.set('name', 'Mairy');
 console.log('user name is ' + user.get('name'));
 ```
 
-Or create a readonly proxy:
+
+#### Readonly proxies
 
 ```javascript
 // Create a UserProxy class
@@ -44,7 +52,7 @@ var UserProxy = BackboneProxy.extend(user);
 // Instantiate a readonly proxy - a proxy that throws on any invocation of .set
 var userReadonly = new UserProxy();
 userReadonly.set = function () {
-  throw 'cannot set attributes on readonly user model'
+  throw 'cannot set attributes on readonly user model';
 };
 
 // Attributes cannot be set on userReadonly
@@ -59,6 +67,53 @@ userReadonly.set('name', 'Mairy');
 // Will alert 'user name was set to Mairy'
 user.set('name', 'Mairy');
 ```
+
+
+#### Vew-specific proxies
+
+```javascript
+// Create a UserProxy class
+var UserProxy = BackboneProxy.extend(user);
+
+// Instantiate a proxy to pass to view1
+var userProxy1 = new UserProxy();
+userProxy1.set = function (key, val, opts) {
+
+  // Handle both key/value and {key: value} - style arguments
+  var attrs;
+  if (typeof key === 'object') { attrs = key; opts = val; }
+  else { (attrs = {})[key] = val; }
+
+  // Automatically update lastUpdatedBy to 'view1' on every invocation of set
+  attrs.lastUpdatedBy = 'view1';
+
+  // Delegate to UserProxy implementation
+  UserProxy.prototype.set.call(this, attrs, opts);
+};
+
+// Instantiate a proxy to pass to view2. Similar to userProxy1 -
+//  will automatically set the lastUpdatedBy attr to 'view2'
+var userProxy2 = new UserProxy();
+userProxy2.set = function (key, val, opts) {
+  var attrs;
+  if (typeof key === 'object') { attrs = key; opts = val; }
+  else { (attrs = {})[key] = val; }
+
+  attrs.lastUpdatedBy = 'view2';
+
+  UserProxy.prototype.set.call(this, attrs, opts);
+};
+
+var view1 = new SomeView({ model: userProxy1 });
+var view2 = new SomeOtherView({ model: userProxy2 });
+
+// Will log modifications of user object '..by view1' / '..by view2'
+user.on('change', function () {
+  console.log('user modified by ' + user.get('lastUpdatedBy'));
+});
+
+```
+
 
 Set up
 ------
@@ -122,7 +177,6 @@ At the time of this writing, BackboneProxy has only been tested against Backbone
 Usage
 -----
 
-Proper documentation is forthcoming. Until then, please take a look at `test-*.js` under `test/`.
 
 
 License
