@@ -1,4 +1,4 @@
-/*global BackboneProxy, _, QUnit, test, ok, strictEqual, deepEqual, expect, Backbone */
+/*global Backbone, BackboneProxy, QUnit, test, strictEqual, ok */
 (function () {
     'use strict';
 
@@ -66,6 +66,8 @@
         proxy.set({ id: 1 });
         proxy.destroy();
     });
+
+    // TODO:
 
     //////// .idAttribute property
     //////// .validate() method
