@@ -23,7 +23,7 @@ qunit.run({
   },
   tests: [
     absPath('test-model-overridables.js'),
-    absPath('test-use-case.js'),
+    absPath('test-examples.js'),
     absPath('test-set().js'),
     absPath('test-on().js'),
     absPath('test-once().js'),
