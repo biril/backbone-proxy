@@ -177,6 +177,201 @@ At the time of this writing, BackboneProxy has only been tested against Backbone
 Usage
 -----
 
+BackboneProxy exposes a single `extend` method as the means of creating a Proxy 'class' for any
+given `model` (or model proxy):
+
+```javascript
+// Create Proxy class for given model
+var Proxy = BackboneProxy.extend(model);
+
+// Instantiate any number of proxies
+var someProxy = new Proxy();
+var someOtherProxy = new Proxy();
+
+// Yes, you can proxy a proxy
+var ProxyProxy = BackboneProxy.extend(someProxy);
+var someProxyProxy = new ProxyProxy();
+```
+
+For any given `proxied`/`proxy` models that have a proxied-to-proxy relationship, the following
+apply:
+
+Any attribute `set` on `proxied` will be set on `proxy` and vice versa (the same applies for
+`unset` and `clear`):
+
+```javascript
+proxied.set({ name: 'Betty' });
+console.log(proxy.get('name')); // Will log 'Betty'
+
+proxy.set({ name: 'Charles' });
+console.log(proxied.get('name')); // Will log 'Charles'
+```
+
+Built-in model events (add, remove, reset, change, destroy, request, sync, error, invalid)
+triggered in response to actions performed on `proxied` will also be triggered on `proxy`. And vice
+versa:
+
+```javascript
+proxy.on('change:name', function (model) {
+  console.log('name set to ' + model.get('name'))
+});
+proxied.set({ name: 'Betty' }); // Will log 'name set to Betty'
+
+proxied.on('sync', function () {
+  console.log('model synced');
+});
+proxy.fetch(); // Will log 'model' synced
+
+```
+
+User-defined events triggered on `proxied` will also be triggered on `proxy`. The opposite is _not_
+true:
+
+```javascript
+proxied.on('boo', function () {
+  console.log('a scare on proxied');
+});
+proxy.on('boo', function () {
+  console.log('a scare on proxy');
+});
+
+proxied.trigger('boo'); // Will log 'a scare on proxied' & 'a scare on proxy'
+proxy.trigger('boo'); // Will only log 'a scare on proxy'
+
+```
+
+Additions and removals of event listeners are, generally speaking, 'scoped' to each model. That is
+to say, event listeners may be safely added on, and - primarily - removed from the proxied (/proxy)
+without affecting event listeners on the proxy (/proxied). This holds when removing listeners by
+callback or context. For example, when removing listeners by callback:
+
+```javascript
+var onModelChange = function (model) {
+  console.log('model changed');
+};
+
+proxied.on('change', onModelChange);
+proxy.on('change', onModelChange);
+
+proxied.set({ name: 'Betty' }); // Will log 'model changed' twice
+
+// Will only remove the listener previously added on proxied
+proxied.off(null, onModelChange);
+
+proxied.set({ name: 'Charles' }); // Will log 'model changed' once
+```
+
+Removing listeners by event name works similarly:
+
+```javascript
+proxied.on('change:name', function () {
+  console.log('caught on proxied');
+});
+proxy.on('change:name', function () {
+  console.log('caught on proxy');
+});
+
+proxied.set({ name: 'Betty' }); // Will log 'caught on proxied' & 'caught on proxy'
+
+// Will only remove the listener previously added on proxied
+proxied.off('change:name');
+
+proxied.set({ name: 'Charles' }); // Will only log 'caught on proxy'
+```
+
+**However**, removing listeners registered for the 'all' event presents a special case as it will
+interfere with BackboneProxy's internal event-forwarding. Essentially, you should avoid
+`.off('all')` for models which are proxied - it will disable event notifications on the proxy:
+
+```javascript
+proxy.on('change:name', function () {
+  console.log('changed name');
+});
+proxy.on('change:age', function () {
+  console.log('changed age');
+});
+
+// Will log 'changed name' & 'changed age'
+proxied.set({
+  name: 'Betty',
+  age: 29
+});
+
+// Bad move
+proxied.off('all');
+
+// Will log nothing
+proxied.set({
+  name: 'Charles',
+  age: 31
+});
+```
+
+The `model` argument passed to a listener will always be set to the model to which the listener was
+added. The same is true for the context (as long as it's not explicitly set):
+
+```javascript
+var onModelChanged = function (model) {
+    model.dump(); // Or alternatively, this.dump();
+  };
+
+proxied.dump = function () {
+  console.log('proxied changed: ' + JSON.stringify(this.changedAttributes()));
+};
+proxy.dump = function () {
+  console.log('proxy changed: ' + JSON.stringify(this.changedAttributes()));
+};
+
+proxied.on('change', onModelChanged);
+proxy.on('change', onModelChanged);
+
+proxied.set({ name: 'Betty' }); // Will log 'proxied changed: ..' & 'proxy changed: ..'
+
+proxy.off(null, onModelChanged);
+proxy.set({ name: 'Charles' }); // Will log 'proxied changed: ..'
+```
+
+Backbone's 'overridables', i.e. properties and methods that modify model behaviour when set
+(`idAttribute`, `sync`, `parse`, `validate`, `url`, `urlRoot` and `toJSON`) will have no effect
+when set on proxy. They need to be set on proxied - that is to say the _root_ proxied
+`Backbone.Model`:
+
+```javascript
+proxy.validate = function (attrs) {
+  if (attrs.name === 'Betty') {
+    return 'Betty is not a valid name';
+  }
+};
+
+proxy.set({ name: 'Betty' }, { validate: true });
+
+// Will log 'validation error: none'
+console.log('validation error: ' + (proxy.validationError || 'none'));
+
+proxied.validate = function (attrs) {
+  if (attrs.name === 'Charles') {
+    return 'Charles is not a valid name';
+  }
+};
+
+proxy.set({ name: 'Charles' }, { validate: true });
+
+// Will log 'validation error: Charles is not a valid name'
+console.log('validation error: ' + (proxy.validationError || 'none'));
+
+```
+
+
+Testing / Contributing
+----------------------
+
+The QUnit test suite may be run in a browser (test/index.html) or on the command line, by running
+`make test` or `npm test`. The command line version runs on Node and depends on
+[node-qunit](https://github.com/kof/node-qunit) (`npm install` to fetch it before testing).
+
+Contributions are obviously very much appreciated. Please commit your changes on the `dev` branch -
+not `master`. `dev` is always ahead, contains the latest state of the project and is periodically
+merged back to `master` with the appropriate version bump.
 
 
 License
