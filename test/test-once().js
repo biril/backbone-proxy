@@ -40,6 +40,10 @@
         setup(tM, oM);
         expect();
       };
+    },
+
+    areProxiedAndProxy = function (tM, oM) {
+      return (tM === 'proxied' && oM !== 'proxied') || (tM === 'proxy' && oM === 'proxyProxy');
     };
 
   _(['proxied', 'proxy', 'proxy2', 'proxyProxy']).each(function (tM) { // target model
@@ -363,6 +367,34 @@
         targetModel.clear();
         targetModel.set({ name: 'Anna' }); // Should have no effect
       }));
+
+      if (tM === oM || areProxiedAndProxy(tM, oM)) {
+
+        test(tM + '.trigger(boo) should invoke boo-event listener on ' + oM, 1, s(tM, oM, function () {
+          otherModel.once('boo', function (hoo) {
+            strictEqual(hoo, 'hoo');
+          });
+          targetModel.trigger('boo', 'hoo');
+        }));
+
+        test(tM + '.trigger(boo) should invoke all-event listener on ' + oM, 2, s(tM, oM, function () {
+          otherModel.once('all', function (event, hoo) {
+            strictEqual(event, 'boo', 'listener invoked with boo-event');
+            strictEqual(hoo, 'hoo', 'hoo argument set as expected');
+          });
+          targetModel.trigger('boo', 'hoo');
+        }));
+
+      } else {
+
+        test(tM + '.trigger(boo) should not invoke boo-event listener on ' + oM, 0, s(tM, oM, function () {
+          otherModel.once('boo', function () {
+            ok(false);
+          });
+          targetModel.trigger('boo', 'hoo');
+        }));
+
+      }
 
     }); // Iterate: other model = proxied', 'proxy', 'proxy2', 'proxyProxy'
 
