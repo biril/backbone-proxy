@@ -132,18 +132,20 @@
 
       var createProxyCallback, EventEngine;
 
-      // For given subscription, create a proxy-callback - a callback to pass into the
-      //  event-engine in place of the original callback
+      // For given subscription (that is defined by specified event-name, callback and context),
+      //  create a proxy-callback - a callback to pass into Backbone's Event module in place of the
+      //  callback provided by the caller. The proxy-callback will take care of appropriately
+      //  setting `model` arguments that may be present (in the case of model built-in events) as
+      //  well as the context, if it's not explicitly set
       createProxyCallback = function (proxy, event, callback, context) {
+
+        // The context is the one that's already provided or forced to the proxy
         context || (context = proxy);
 
-        if (event === 'all') {
-          return function () {
-            arguments[1] = proxy;
-            callback.apply(context, arguments);
-          };
-        }
-
+        // If the subscription is for a model built-in event, the proxy-callback will have to
+        //  replace the model argument with the proxy (as Backbone's Event module will set it to
+        //  the proxied when invoking the callback). Same goes for the context in the case that it
+        //  wasn't explicitly set by the caller
         if (_(builtInEventNames).contains(event) || !event.indexOf('change:')) {
           return function () {
             arguments[0] = proxy;
@@ -151,7 +153,24 @@
           };
         }
 
-        return function () {
+        // The subscription doesn't concern a built-in event. If additionally it's not for the
+        //  'all' event, then we're dealing with a user-defined event. In this case we'll only have
+        //  to make sure that the callback is invoked with proxy as the context
+        if (event !== 'all') {
+          return function () {
+            callback.apply(context, arguments);
+          };
+        }
+
+        // The subscription is for the 'all' event. The callback will run for built-in events as
+        //  well as arbitrary user defined events. We'll have to check the type of the event at
+        //  callback-invocation-time and treat it as one of the two preceding cases. (And yes, if
+        //  client-code decides to trigger() an event which is named like a built-in but doesn't
+        //  carry the expected parameters, things will go sideways)
+        return function (event) {
+          if (_(builtInEventNames).contains(event) || !event.indexOf('change:')) {
+            arguments[1] = proxy;
+          }
           callback.apply(context, arguments);
         };
       },
