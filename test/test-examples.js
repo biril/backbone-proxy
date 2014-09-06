@@ -2,7 +2,15 @@
 (function () {
   'use strict';
 
-  var User = Backbone.Model.extend({ defaults: { name: 'Anna', age: 23 } }), user;
+  var
+    User = Backbone.Model.extend({ defaults: { name: 'Anna', age: 23 } }), user,
+    DummyView = Backbone.View.extend({
+      constructor: function DummyView () {
+        // _Don't_ ensureElement. This will break the tests in environments where $ is not defined
+        this._ensureElement = function () {};
+        Backbone.View.apply(this, arguments);
+      }
+    });
 
   QUnit.module('examples: use cases', {
     setup: function () {
@@ -90,12 +98,12 @@
           nextExpectedLog = 'user modified by view2';
         }
       },
-      SomeView = Backbone.View.extend({
+      SomeView = DummyView.extend({
         modifyModel: function () {
           this.model.set({ name: 'Betty' });
         }
       }),
-      SomeOtherView = Backbone.View.extend({
+      SomeOtherView = DummyView.extend({
         modifyModel: function () {
           this.model.set({ name: 'Charles' });
         }
