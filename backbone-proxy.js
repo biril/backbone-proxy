@@ -1,4 +1,4 @@
-//     Backbone Proxy v0.0.1
+//     Backbone Proxy v0.1.0
 
 //     https://github.com/biril/backbone-proxy
 //     Licensed and freely distributed under the MIT License
