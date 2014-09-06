@@ -2,7 +2,7 @@ Backbone Proxy
 ==============
 
 [![Build Status](https://travis-ci.org/biril/backbone-proxy.png)](https://travis-ci.org/biril/backbone-proxy)
-[![NPM version](https://badge.fury.io/js/backbone-proxy.png)](http://badge.fury.io/js/backbone-proxy)
+[![NPM version](https://badge.fury.io/js/backbone-proxy_.png)](http://badge.fury.io/js/backbone-proxy_)
 [![Bower version](https://badge.fury.io/bo/backbone-proxy.png)](http://badge.fury.io/bo/backbone-proxy)
 
 Model proxies for Backbone. Notably useful in applications where sharing a single model instance
@@ -119,7 +119,7 @@ Set up
 ------
 
 * install with bower, `bower install backbone-proxy`,
-* install with npm, `npm install backbone-proxy` or
+* install with npm, `npm install backbone-proxy_` or
 * just include [`backbone-proxy.js`](https://raw.github.com/biril/backbone-proxy/master/backbone-proxy.js)
     in your project.
 
