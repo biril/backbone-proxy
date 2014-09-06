@@ -16,6 +16,32 @@ qunit.options.deps = [{
   namespace: 'Backbone'
 }];
 
+qunit.options.log = {
+  // log assertions overview
+  assertions: false,
+
+  // log expected and actual values for failed tests
+  errors: true,
+
+  // log tests overview
+  tests: false,
+
+  // log summary
+  summary: true,
+
+  // log global summary (all files)
+  globalSummary: true,
+
+  // log coverage
+  coverage: true,
+
+  // log global coverage (all files)
+  globalCoverage: true,
+
+  // log currently testing code file
+  testing: true
+};
+
 qunit.run({
   code: {
     path: absPath('../backbone-proxy.js'),
