@@ -141,14 +141,14 @@ the current environment:
 * `require` when working _with CommonJS_ (e.g. Node). Assuming BackboneProxy is `npm install`ed:
 
     ```javascript
-    var BackboneProxy = require("backbone-proxy");
+    var BackboneProxy = require('backbone-proxy');
     ```
 
 * Or list as a dependency when working _with an AMD loader_ (e.g. RequireJS):
 
     ```javascript
     // Your module
-    define(["backbone-proxy"], function (BackboneProxy) {
+    define(['backbone-proxy'], function (BackboneProxy) {
       // ...
     });
     ```
@@ -160,11 +160,11 @@ the current environment:
 
     ```javascript
     require.config({
-        baseUrl: "myapp/",
-        paths: {
-            "underscore": "mylibs/underscore",
-            "backbone": "mylibs/backbone"
-        }
+      baseUrl: 'myapp/',
+      paths: {
+        'underscore': 'mylibs/underscore',
+        'backbone': 'mylibs/backbone'
+      }
     });
     ```
 
