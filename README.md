@@ -120,8 +120,8 @@ Set up
 
 * install with bower, `bower install backbone-proxy`,
 * install with npm, `npm install backbone-proxy_` or
-* just include [`backbone-proxy.js`](https://raw.github.com/biril/backbone-proxy/master/backbone-proxy.js)
-    in your project.
+* just include the
+    [latest stable `backbone-proxy.js`](https://github.com/biril/backbone-proxy/releases).
 
 Backbone proxy may be used as an exported global, a CommonJS module or an AMD module depending on
 the current environment:
@@ -369,9 +369,7 @@ The QUnit test suite may be run in a browser (test/index.html) or on the command
 `make test` or `npm test`. The command line version runs on Node and depends on
 [node-qunit](https://github.com/kof/node-qunit) (`npm install` to fetch it before testing).
 
-Contributions are obviously very much appreciated. Please commit your changes on the `dev` branch -
-not `master`. `dev` is always ahead, contains the latest state of the project and is periodically
-merged back to `master` with the appropriate version bump.
+Contributions are obviously very much appreciated.
 
 
 License
