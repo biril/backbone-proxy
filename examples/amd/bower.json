@@ -1,0 +1,25 @@
+{
+  "name": "backbone-proxy-AMD-example",
+  "version": "0.0.1",
+  "authors": [
+    "biril <alexlambiris@gmail.com>"
+  ],
+  "description": "Backbone Proxy AMD example",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components"
+  ],
+  "dependencies": {
+    "requirejs": "~2.1.14",
+    "underscore": "~1.7.0",
+    "jquery": "~2.1.1",
+    "backbone": "~1.1.2",
+    "backbone-proxy": "~0.1.0"
+  },
+  "resolutions": {
+    "underscore": "~1.7.0"
+  }
+}
