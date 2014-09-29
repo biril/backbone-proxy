@@ -6,14 +6,16 @@
 // Proxies aim to comply with vanilla Backbone model behaviour - however some deviations are in
 //  place, specifically for the case of 'magical properties' like `id`, `validate`, `sync`, etc:
 //
-// * [~~~1]: Setting a `validate` method on the proxy won't work. Needs to be set on
+// * [~~~1]: Setting a `validate` method on the proxy won't work as expected. Needs to be set on
 //     `proxy._proxied` instead
-// * [~~~2]: Setting a `url` property on the proxy won't work. Needs to be set on `proxy._proxied`
-//     instead
-// * [~~~3]: Setting a `sync` method on the proxy won't work. Needs to be set on `proxy._proxied`
-//     instead
+// * [~~~2]: Setting a `url` property on the proxy won't work as expected. Needs to be set on
+//     `proxy._proxied` instead
+// * [~~~3]: Setting a `sync` method on the proxy won't work as expected. Needs to be set on
+//     `proxy._proxied` instead
 // * [~~~4]: The model that's passed to sync is always the proxied - never the proxy (regardless
 //     of whether `fetch` / `save` / `destroy` was called on the proxied or the proxy)
+// * [~~~5]: Setting an idAttribute on the proxy won't work as expected. Needs to be set on
+//     `proxy._proxied` instead
 
 (function() {
 
@@ -938,7 +940,7 @@
   // });
   //
   test("using a non-default id attribute.", 5, function() {
-    var MongoModel = Backbone.Model.extend({idAttribute : '_id'});
+    var MongoModel = Backbone.Model.extend({idAttribute : '_id'}); // In line with [~~~5]
     var model = prx(new MongoModel({id: 'eye-dee', _id: 25, title: 'Model'}));
     equal(model.get('id'), 'eye-dee');
     equal(model.id, 25);
@@ -948,7 +950,7 @@
     equal(model.isNew(), true);
   });
   test("using a non-default id attribute. [1]", 5, function() {
-    var MongoModel = Backbone.Model.extend({idAttribute : '_id'});
+    var MongoModel = Backbone.Model.extend({idAttribute : '_id'}); // In line with [~~~5]
     var model = new MongoModel({id: 'eye-dee', _id: 25, title: 'Model'});
     var modelProxy = prx(model);
     equal(modelProxy.get('id'), 'eye-dee');

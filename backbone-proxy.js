@@ -248,26 +248,32 @@
           };
         }, this);
 
-        // Attribute-write methods
-        //
-        // should always be invoked with `this` set to `proxied`. This will ensure that
-        //  * all other model methods in the call-graph of `proxied.set` are also invoked with
-        //     `this` set to `proxied`.
-        //  * all properties which may be set on the model as part of `proxied.set`'s code path
-        //     are set on `proxied`
-        //  Which is important. For example, it will ensure that the `model` parameter made
-        //  available to event listeners attached to `proxied` will be `proxied` - not `proxy`
-        //  (which would otherwise be the case). In terms of set properties, consider
-        //  `validationError` which also needs to be set on `proxied` - not `proxy`.
-        //
-        // Note however that the model which is returned (in case of success) is always the proxy
-        _(['set']).each(function (methodName) {
-          this[methodName] = function () {
-            return proxied[methodName].apply(proxied, arguments) ? this : false;
-          };
-        }, this);
 
-        // Persistence methods
+        // ## Methods that should always be invoked with `this` set to `proxied`
+        //
+        // This ensures that
+        //  * all other model methods in the call-graph of the invoked method (e.g. `proxied.set`)
+        //     are also invoked with `this` set to `proxied`.
+        //  * all properties which may be set on the model as part of the invoked method's code
+        //     path are set on `proxied`
+        //  For example, this ensures that the `model` parameter made available to event listeners
+        //  attached to `proxied` will be `proxied` - not `proxy` (which would otherwise be the
+        //  case). In terms of set properties, consider `validationError` which also needs to be
+        //  set on `proxied` - not `proxy`.
+
+        // Generally, we just need to forward to `proxied`
+        this.isNew = function () {
+          return proxied.isNew();
+        };
+
+        // Specifically for the case of `set`, we need to replace the returned
+        //  reference with `this`. To get proper chaining
+        this.set = function () {
+          return proxied.set.apply(proxied, arguments) ? this : false;
+        };
+
+
+        // ## Persistence methods
         //
         createPersistenceMethod = function (methodName, isWithAttributes) {
           return function () {

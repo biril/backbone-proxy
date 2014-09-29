@@ -67,13 +67,30 @@
         proxy.destroy();
     });
 
+    //////// .idAttribute property
+
+    test('setting idAttribute on proxy should have no effect', 2, function () {
+        proxy.set({ id: '01234'});
+        proxy.idAttribute = '_id';
+
+        ok(!proxied.isNew(), 'proxied is not new, although idAttribute is changed');
+        ok(!proxy.isNew(), 'proxy is not new, although idAttribute is changed');
+    });
+
+    test('setting idAttribute on proxied should have the intended effect', 2, function () {
+        proxy.set({ id: '01234'});
+        proxied.idAttribute = '_id';
+
+        ok(proxied.isNew(), 'proxied with changed idAttribute is new');
+        ok(proxy.isNew(), 'proxy with changed idAttribute is new');
+    });
+
     // TODO:
 
-    //////// .idAttribute property
+    //////// .toJSON() method
     //////// .validate() method
     //////// .url() method
     //////// .urlRoot() method
-    //////// .toJSON() method
     //////// .parse() method
 
 }());
