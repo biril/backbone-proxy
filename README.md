@@ -369,7 +369,8 @@ The QUnit test suite may be run in a browser (test/index.html) or on the command
 `make test` or `npm test`. The command line version runs on Node and depends on
 [node-qunit](https://github.com/kof/node-qunit) (`npm install` to fetch it before testing).
 
-Contributions are obviously very much appreciated.
+Contributions are obviously appreciated. In lieu of a formal styleguide, take care to maintain the
+existing coding style. Please make sure your changes test out green prior to pull requests.
 
 
 License
