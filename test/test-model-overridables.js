@@ -1,4 +1,4 @@
-/*global Backbone, BackboneProxy, QUnit, test, strictEqual, ok */
+/*global Backbone, _, BackboneProxy, QUnit, test, strictEqual, ok */
 (function () {
   'use strict';
 
@@ -82,6 +82,57 @@
     proxy.destroy();
   });
 
+  //////// .url() / .urlRoot / .urlRoot() properties & methods
+
+  test('setting the url() method on proxy should not affect the request URL during sync', 1, function () {
+    proxied.urlRoot = 'original url';
+    proxied.sync = function (method, model) {
+      strictEqual(_.result(model, 'url'), 'original url');
+    };
+
+    proxy.url = function () {
+      return 'changed url';
+    };
+    proxy.fetch(); // or save/destroy
+  });
+
+  test('setting the urlRoot property on proxy should not affect the result of proxy.url()', 1, function () {
+    proxied.urlRoot = 'original url';
+    proxy.urlRoot = 'changed url';
+    strictEqual(proxy.url(), 'original url');
+  });
+
+  test('setting the urlRoot property on proxy should not affect the request URL during sync', 1, function () {
+    proxied.urlRoot = 'original url';
+    proxied.sync = function (method, model) {
+      strictEqual(_.result(model, 'url'), 'original url');
+    };
+
+    proxy.urlRoot = 'changed url';
+
+    proxy.fetch(); // or save/destroy
+  });
+
+  test('setting the urlRoot() method on proxy should not affect the result of proxy.url()', 1, function () {
+    proxied.urlRoot = 'original url';
+    proxy.urlRoot = function () {
+      return 'changed url';
+    };
+    strictEqual(proxy.url(), 'original url');
+  });
+
+  test('setting the urlRoot() method on proxy should not affect the request URL during sync', 1, function () {
+    proxied.urlRoot = 'original url';
+    proxied.sync = function (method, model) {
+      strictEqual(_.result(model, 'url'), 'original url');
+    };
+
+    proxy.urlRoot = function () {
+      return 'changed url';
+    };
+    proxy.fetch(); // or save/destroy
+  });
+
   //////// .idAttribute property
 
   test('setting idAttribute on proxy should have no effect', 2, function () {
@@ -104,8 +155,6 @@
 
   //////// .toJSON() method
   //////// .validate() method
-  //////// .url() method
-  //////// .urlRoot() method
   //////// .parse() method
 
 }());
