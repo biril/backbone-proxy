@@ -2,7 +2,10 @@
 (function () {
   'use strict';
 
-  var proxied, proxy;
+  var
+    sync = Backbone.sync,
+    proxied,
+    proxy;
 
   QUnit.module('model overridables', {
     setup: function () {
@@ -10,15 +13,27 @@
       proxied = new Backbone.Model({ name: 'Anna' });
       Proxy = BackboneProxy.extend(proxied);
       proxy = new Proxy();
+      Backbone.sync = function () {
+        throw 'unexpected invocation of Backbone.sync';
+      };
+    },
+    teardown: function () {
+      Backbone.sync = sync;
     }
   });
 
   //////// .sync() method
 
   test('setting a .sync() method on proxy should have no effect', 0, function () {
+    proxied.sync = function () {};
     proxy.sync = function () {
       ok(false, 'the sync method should not be invoked');
     };
+    proxy.fetch();
+    proxy.save();
+    proxy.set({ id: 1 });
+    proxy.save();
+    proxy.destroy();
   });
 
   test('a .sync() method set on proxied should be invoked when proxy is persisted', 4, function () {
