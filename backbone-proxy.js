@@ -262,9 +262,11 @@
         //  set on `proxied` - not `proxy`.
 
         // Generally, we just need to forward to `proxied`
-        this.isNew = function () {
-          return proxied.isNew();
-        };
+        _(['isNew', 'url']).each(function (methodName) {
+          this[methodName] = function () {
+            return proxied[methodName]();
+          };
+        }, this);
 
         // Specifically for the case of `set`, we need to replace the returned
         //  reference with `this`. To get proper chaining
