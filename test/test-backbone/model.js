@@ -1,5 +1,5 @@
 /* jshint quotmark:false, strict:false */
-/* global Backbone:false, _:false, BackboneProxy:false, module:false, test:false, asyncTest:false, equal:false, notEqual:false, raises:false, deepEqual:false, ok:false, strictEqual:false */
+/* global QUnit, Backbone, _, BackboneProxy, test, asyncTest, equal, notEqual, raises, deepEqual, ok, strictEqual */
 
 // Taken from Backbone 1.1.2 test suite and modified appropriately
 //
@@ -32,7 +32,7 @@
     return new Proxy();
   };
 
-  module("Backbone.Model", {
+  QUnit.module("Backbone.Model", {
 
     setup: function() {
       doc = new proxy({
