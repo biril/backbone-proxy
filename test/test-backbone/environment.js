@@ -1,7 +1,8 @@
 /* jshint strict:false */
-/* global QUnit:false, Backbone:false, window:false */
+/* global QUnit:false, Backbone:false */
 
 // Taken from Backbone 1.1.2 test suite
+// Routing-specific stuff commented out
 
 (function() {
 
@@ -9,15 +10,15 @@
   var ajax = Backbone.ajax;
   var emulateHTTP = Backbone.emulateHTTP;
   var emulateJSON = Backbone.emulateJSON;
-  var history = window.history;
-  var pushState = history.pushState;
-  var replaceState = history.replaceState;
+  // var history = window.history;
+  // var pushState = history.pushState;
+  // var replaceState = history.replaceState;
 
   QUnit.testStart(function() {
     var env = this.config.current.testEnvironment;
 
     // We never want to actually call these during tests.
-    history.pushState = history.replaceState = function(){};
+    // history.pushState = history.replaceState = function(){};
 
     // Capture ajax settings for comparison.
     Backbone.ajax = function(settings) {
@@ -41,8 +42,8 @@
     Backbone.ajax = ajax;
     Backbone.emulateHTTP = emulateHTTP;
     Backbone.emulateJSON = emulateJSON;
-    history.pushState = pushState;
-    history.replaceState = replaceState;
+    // history.pushState = pushState;
+    // history.replaceState = replaceState;
   });
 
 })();
