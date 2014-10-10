@@ -16,6 +16,8 @@
 //     of whether `fetch` / `save` / `destroy` was called on the proxied or the proxy)
 // * [~~~5]: Setting an idAttribute on the proxy won't work as expected. Needs to be set on
 //     `proxy._proxied` instead
+// * [~~~6]: Setting a `collection` property on the proxy won't work as expected. Needs to be set
+//     on `proxy._proxied` instead
 
 (function() {
 
@@ -234,7 +236,7 @@
     equal(docProxy.url(), '/collection/1-the-tempest');
     docProxy.collection.url = '/collection/';
     equal(docProxy.url(), '/collection/1-the-tempest');
-    docProxy.collection = null;
+    docProxy._proxied.collection = null; // [~~~6]
     raises(function() { docProxy.url(); });
     docProxy.collection = collection;
   });
