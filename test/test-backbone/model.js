@@ -366,22 +366,6 @@
   });
 
 
-  // test("chain", function() {
-  //   var model = new Backbone.Model({ a: 0, b: 1, c: 2 });
-  //   deepEqual(model.chain().pick("a", "b", "c").values().compact().value(), [1, 2]);
-  // });
-  //
-  test("chain", function() {
-    var model = prx(new Backbone.Model({ a: 0, b: 1, c: 2 }));
-    deepEqual(model.chain().pick("a", "b", "c").values().compact().value(), [1, 2]);
-  });
-  test("chain [1]", function() {
-    var model = new Backbone.Model({ a: 0, b: 1, c: 2 });
-    var modelProxy = prx(model);
-    deepEqual(modelProxy.chain().pick("a", "b", "c").values().compact().value(), [1, 2]);
-  });
-
-
   // test("clone", 10, function() {
   //   var a = new Backbone.Model({ 'foo': 1, 'bar': 2, 'baz': 3});
   //   var b = a.clone();
