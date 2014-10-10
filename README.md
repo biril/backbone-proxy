@@ -331,32 +331,34 @@ proxy.off(null, onModelChanged);
 proxy.set({ name: 'Charles' }); // Will log 'proxied changed: ..'
 ```
 
-Backbone's 'overridables', i.e. properties and methods that modify model behaviour when set
-(`idAttribute`, `sync`, `parse`, `validate`, `url`, `urlRoot` and `toJSON`) will have no effect
-when set on proxy. They need to be set on proxied - that is to say the _root_ proxied
-`Backbone.Model`:
+Backbone's 'overridables', i.e. properties and methods that affect model behaviour when set
+(namely `collection`, `idAttribute`, `sync`, `parse`, `validate`, `url`, `urlRoot` and `toJSON`)
+should be set on the proxied model. That is to say, the _root_ proxied `Backbone.Model`. Setting
+them on a proxied model is not meant to (and will generally _not_) produce the intended result. As
+an example:
 
 ```javascript
+// Setting a validate method on a proxy ..
 proxy.validate = function (attrs) {
   if (attrs.name === 'Betty') {
     return 'Betty is not a valid name';
   }
 };
 
+// .. will not work: This will log 'validation error: none'
 proxy.set({ name: 'Betty' }, { validate: true });
-
-// Will log 'validation error: none'
 console.log('validation error: ' + (proxy.validationError || 'none'));
 
+// Setting a validate method on the proxied ..
 proxied.validate = function (attrs) {
   if (attrs.name === 'Charles') {
     return 'Charles is not a valid name';
   }
 };
 
+// .. will produce the intended result:
+//  This will log 'validation error: Charles is not a valid name'
 proxy.set({ name: 'Charles' }, { validate: true });
-
-// Will log 'validation error: Charles is not a valid name'
 console.log('validation error: ' + (proxy.validationError || 'none'));
 
 ```
