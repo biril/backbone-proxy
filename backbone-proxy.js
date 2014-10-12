@@ -23,28 +23,21 @@
   }
 
   // Otherwise we assume running in a browser - no AMD loader
-  var BackboneProxy = createModule({}, _, Backbone);
 
-  // When running in a browser, the additional `noConflict` method is attached to `BackboneProxy`.
-  // This is only meaningful in this specific case where `BackboneProxy` is globally exposed
-  BackboneProxy.noConflict = (function() {
+  // Save a reference to previous value of `BackboneProxy` before (potentially) overwriting it -
+  //  so that it can be restored on `noConflict`
+  var previousBackboneProxy = root.BackboneProxy;
 
-    // Save a reference to the previous value of 'BackboneProxy', so that it can be restored
-    //  later on, if 'noConflict' is used
-    var previousBackboneProxy = root.BackboneProxy;
+    //
+    createModule(root.BackboneProxy = {}, _, Backbone);
 
-    // The `noConflict` method: Sets the _global_ `BackboneProxy` variable to to its previous
-    //  value returning a reference to `BackboneProxy`
-    return function () {
-      BackboneProxy.noConflict = function () {
-        return BackboneProxy;
-      };
-      root.BackboneProxy = previousBackboneProxy;
-      return BackboneProxy;
+    // The `noConflict` method sets the `BackboneProxy` _global_ to to its previous value (_once_),
+    //  returning a reference to `BackboneProxy` (_always_)
+    root.BackboneProxy.noConflict = function () {
+        var BackboneProxy = root.BackboneProxy;
+        root.BackboneProxy = previousBackboneProxy;
+        return (BackboneProxy.noConflict = function () { return BackboneProxy; }).call();
     };
-  }());
-
-  root.BackboneProxy = BackboneProxy;
 
 }(this, function (BackboneProxy, _, Backbone) {
   'use strict';
