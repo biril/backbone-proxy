@@ -22,11 +22,13 @@
   },
   "devDependencies": {
     "qunit": "0.7.x",
-    "jshint": "2.5.x"
+    "jshint": "2.5.x",
+    "docco": "0.6.x"
   },
   "scripts": {
     "test": "node ./test/testrunner.js",
-    "lint": "jshint --show-non-errors backbone-proxy.js test/testrunner.js"
+    "lint": "jshint --show-non-errors backbone-proxy.js test/testrunner.js",
+    "doc": "docco backbone-proxy.js"
   },
   "engines": {
     "node": ">=0.8"
