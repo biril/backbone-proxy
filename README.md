@@ -20,7 +20,7 @@ For example, you can create:
 
 ```javascript
 // Create a UserProxy class. Instances will proxy the given user model
-// Note that in this case, user is a model _instance_ - not a class
+// Note that user is a model _instance_ - not a class
 var UserProxy = BackboneProxy.extend(user);
 
 // Instantiate a logging proxy - a proxy that logs all invocations of .set
@@ -220,7 +220,7 @@ proxied.set({ name: 'Betty' }); // Will log 'name set to Betty'
 proxied.on('sync', function () {
   console.log('model synced');
 });
-proxy.fetch(); // Will log 'model' synced
+proxy.fetch(); // Will log 'model synced'
 
 ```
 
