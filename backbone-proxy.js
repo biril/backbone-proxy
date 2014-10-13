@@ -1,28 +1,32 @@
 //     Backbone Proxy v0.1.0
-
+//
 //     https://github.com/biril/backbone-proxy
 //     Licensed and freely distributed under the MIT License
 //     Copyright (c) 2014 Alex Lambiris
 
 /*globals exports, define, require, _, Backbone */
+
+// Detect env & export module
+// --------------------------
+
 (function (root, createModule) {
   'use strict';
 
-  // A global `define` method with an `amd` property signifies the presence of an AMD
-  //  loader (require.js, curl.js)
+  // A global `define` method with an `amd` property signifies the presence of an AMD loader
+  //  (require.js, curl.js)
   if (typeof define === 'function' && define.amd) {
     return define(['underscore', 'backbone', 'exports'], function (_, Backbone, exports) {
       return createModule(exports, _, Backbone);
     });
   }
 
-  // A global `exports` object signifies CommonJS-like enviroments that support
-  //  `module.exports`, e.g. Node
+  // A global `exports` object signifies CommonJS-like enviroments that support `module.exports`,
+  //  e.g. Node
   if (typeof exports === 'object') {
     return createModule(exports, require('underscore'), require('backbone'));
   }
 
-  // Otherwise we assume running in a browser - no AMD loader
+  // Otherwise we assume running in a browser - no AMD loader:
 
   // Save a reference to previous value of `BackboneProxy` before (potentially) overwriting it -
   //  so that it can be restored on `noConflict`
@@ -38,6 +42,9 @@
     return (BackboneProxy.noConflict = function () { return BackboneProxy; }).call();
   };
 
+// Create module
+// -------------
+
 }(this, function (BackboneProxy, _, Backbone) {
   'use strict';
 
@@ -52,11 +59,13 @@
     ],
 
 
-    //
-    //   SubscriptionCollection
-    // ==========================
-    //
+    // ### SubscriptionCollection
+    // A collection of subscriptions, where each subscription is a
+    //  `<event, callback, context, proxyCallback>` 4-tuple. Every `EventEngine` instance maintains
+    //  a `SubscriptionCollection` instance to keep track of registered callbacks and the mapping
+    //  of each of those to a _proxy_-callback
 
+    //
     SubscriptionCollection = (function () {
 
       var SubscriptionCollection = function SubscriptionCollection () {
@@ -101,11 +110,13 @@
     }()),
 
 
-    //
-    //   Event Engine
-    // ================
-    //
+    // ### Event Engine
+    // A module that builds on top of `Backbone.Events` to support invoking registered callbacks in
+    //  response to events triggered on a given `proxied` model. Every `ModelProxyProto` instance,
+    //  i.e. every prototype of a created Proxy contains an event engine to facilitate forwarding
+    //  of events from proxied to proxy
 
+    //
     EventEngine = (function () {
 
       var createProxyCallback, EventEngine;
@@ -207,11 +218,11 @@
     }()),
 
 
-    //
-    //   Model Proxy Proto
-    // =====================
-    //
+    // ### Model Proxy Prototype
+    // The prototype of Proxy, per given `proxied` model. Exposes a number of 'tweaked'
+    //  `Backbone.Model` methods which ultimately delegate to `proxied`
 
+    // Create a prototype for Proxy of given `proxied` model
     createModelProxyProtoForProxied = function (proxied) {
 
       var ModelProxyProto;
@@ -219,6 +230,7 @@
       ModelProxyProto = function ModelProxyProto() {
         var createPersistenceMethod;
 
+        //
         _(eventApiMethodNames).each(function (methodName) {
           this[methodName] = function () {
             this._eventEngine[methodName].apply(this._eventEngine, arguments);
@@ -227,14 +239,17 @@
         }, this);
 
 
-        // ## Methods that should always be invoked with `this` set to `proxied`
-        //
+        // #### Methods that should always be invoked with `this` set to `proxied`
+        // e.g `set`
+
         // This ensures that
+        //
         //  * all other model methods in the call-graph of the invoked method (e.g. `proxied.set`)
         //     are also invoked with `this` set to `proxied`.
         //  * all properties which may be set on the model as part of the invoked method's code
         //     path are set on `proxied`
-        //  For example, this ensures that the `model` parameter made available to event listeners
+        //
+        // For example, this ensures that the `model` parameter made available to event listeners
         //  attached to `proxied` will be `proxied` - not `proxy` (which would otherwise be the
         //  case). In terms of set properties, consider `validationError` which also needs to be
         //  set on `proxied` - not `proxy`.
@@ -246,15 +261,18 @@
           };
         }, this);
 
-        // Specifically for the case of `set`, we need to replace the returned
-        //  reference with `this`. To get proper chaining
+        // Specifically, for the case of `set`, we need to replace the returned reference with
+        //  `this`. To get proper chaining
         this.set = function () {
           return proxied.set.apply(proxied, arguments) ? this : false;
         };
 
 
-        // ## Persistence methods
-        //
+        // #### Persistence methods
+        // i.e. `fetch`, `save` & `destroy`
+
+        // Create persistence method of `methodName`, where `isWithAttributes` indicates whether
+        //  the method excepts attributes (`save`) or just options (`fetch`, `destroy`)
         createPersistenceMethod = function (methodName, isWithAttributes) {
           return function () {
             var opts, success, error, args;
@@ -286,7 +304,13 @@
       return ModelProxyProto;
     };
 
+
+  // ### BackboneProxy
+
+  // Features a single `extend` method
   return _(BackboneProxy).extend({
+
+    // Get a Proxy 'class' for given `proxied` model
     extend: function (proxied) {
       var ctor, ModelProxyProto;
 
