@@ -44,25 +44,11 @@
   var
 
     builtInEventNames = [
-      'add',
-      'remove',
-      'reset',
-      'change',
-      'destroy',
-      'request',
-      'sync',
-      'error',
-      'invalid'
+      'add', 'remove', 'reset', 'change', 'destroy', 'request', 'sync', 'error', 'invalid'
     ],
 
     eventApiMethodNames = [
-      'on',
-      'off',
-      'trigger',
-      'once',
-      'listenTo',
-      'stopListening',
-      'listenToOnce'
+      'on', 'off', 'trigger', 'once', 'listenTo', 'stopListening', 'listenToOnce'
     ],
 
 
