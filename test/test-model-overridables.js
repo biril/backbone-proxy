@@ -151,8 +151,35 @@
     ok(proxy.isNew(), 'proxy with changed idAttribute is new');
   });
 
+  //////// .parse() method
+
+  test('setting the parse() method on proxy should not parse response', function () {
+    proxied.sync = function (method, model, opts) {
+      opts.success(_.clone(model.attributes));
+    };
+    proxy.parse = function (response) {
+      return _(response).extend({ isParsed: true });
+    };
+    proxy.fetch();
+
+    ok(!proxy.get('isParsed'));
+  });
+
+  test('setting the parse() method on proxied should parse response', function () {
+    proxied.sync = function (method, model, opts) {
+      opts.success(_.clone(model.attributes));
+    };
+    proxied.parse = function (response) {
+      return _(response).extend({ isParsed: true });
+    };
+    proxy.fetch();
+
+    ok(proxy.get('isParsed'));
+  });
+
   // TODO:
 
+  //////// .collection property
   //////// .toJSON() method
   //////// .validate() method
   //////// .parse() method
