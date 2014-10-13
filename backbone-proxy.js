@@ -12,7 +12,7 @@
   //  loader (require.js, curl.js)
   if (typeof define === 'function' && define.amd) {
     return define(['underscore', 'backbone', 'exports'], function (_, Backbone, exports) {
-        return createModule(exports, _, Backbone);
+      return createModule(exports, _, Backbone);
     });
   }
 
@@ -28,16 +28,15 @@
   //  so that it can be restored on `noConflict`
   var previousBackboneProxy = root.BackboneProxy;
 
-    //
-    createModule(root.BackboneProxy = {}, _, Backbone);
+  createModule(root.BackboneProxy = {}, _, Backbone);
 
-    // The `noConflict` method sets the `BackboneProxy` _global_ to to its previous value (_once_),
-    //  returning a reference to `BackboneProxy` (_always_)
-    root.BackboneProxy.noConflict = function () {
-        var BackboneProxy = root.BackboneProxy;
-        root.BackboneProxy = previousBackboneProxy;
-        return (BackboneProxy.noConflict = function () { return BackboneProxy; }).call();
-    };
+  // The `noConflict` method sets the `BackboneProxy` _global_ to to its previous value (_once_),
+  //  returning a reference to `BackboneProxy` (_always_)
+  root.BackboneProxy.noConflict = function () {
+    var BackboneProxy = root.BackboneProxy;
+    root.BackboneProxy = previousBackboneProxy;
+    return (BackboneProxy.noConflict = function () { return BackboneProxy; }).call();
+  };
 
 }(this, function (BackboneProxy, _, Backbone) {
   'use strict';
