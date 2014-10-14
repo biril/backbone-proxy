@@ -201,6 +201,29 @@
     ok(proxy.get('isParsed'));
   });
 
+  //////// .validate() method
+
+  test('setting the validate() method on proxy should not introduce validation', 1, function () {
+    proxy.validate = function () {
+      return 'invalid';
+    };
+
+    proxy.set({ name: 'Betty' }, { validate: true });
+
+    ok(!proxy.validationError);
+  });
+
+  test('setting the validate() method on proxied should introduce validation', 1, function () {
+    proxied.validate = function () {
+      return 'invalid';
+    };
+
+    proxy.set({ name: 'Betty' }, { validate: true });
+
+    strictEqual(proxy.validationError, 'invalid');
+  });
+
+
   // TODO: .toJSON() method / .validate() method
 
 }());
