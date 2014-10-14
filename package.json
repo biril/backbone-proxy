@@ -27,7 +27,7 @@
   },
   "scripts": {
     "test": "node ./test/testrunner.js",
-    "lint": "jshint --show-non-errors backbone-proxy.js test/testrunner.js",
+    "lint": "jshint --show-non-errors backbone-proxy.js test/testrunner.js test/test-*.js",
     "doc": "docco backbone-proxy.js"
   },
   "engines": {
