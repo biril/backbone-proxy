@@ -201,10 +201,6 @@
     ok(proxy.get('isParsed'));
   });
 
-  // TODO:
-
-  //////// .toJSON() method
-  //////// .validate() method
-  //////// .parse() method
+  // TODO: .toJSON() method / .validate() method
 
 }());
