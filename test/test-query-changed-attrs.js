@@ -1,4 +1,4 @@
-/*global Backbone, BackboneProxy, _, QUnit, test, ok, strictEqual, deepEqual  */
+/*global Backbone, BackboneProxy, _, QUnit, test, strictEqual, deepEqual  */
 (function () {
   'use strict';
 
