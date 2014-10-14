@@ -83,7 +83,7 @@
           options.success(model.toJSON());
         };
 
-        targetModel.set({ id: 1 })
+        targetModel.set({ id: 1 });
         targetModel.save({ name: 'Betty' }, {
           success: function () {
             strictEqual(otherModel.get('name'), 'Betty');

@@ -207,7 +207,7 @@
     ////
 
     proxy.on('change:name', function (model) {
-      console.log('name set to ' + model.get('name'))
+      console.log('name set to ' + model.get('name'));
     });
     proxied.set({ name: 'Betty' }); // Will log 'name set to Betty'
 
