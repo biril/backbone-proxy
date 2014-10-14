@@ -1,4 +1,4 @@
-/*global Backbone, _, BackboneProxy, QUnit, test, strictEqual, ok */
+/*global Backbone, _, BackboneProxy, QUnit, test, strictEqual, ok, throws */
 (function () {
   'use strict';
 
@@ -151,6 +151,30 @@
     ok(proxy.isNew(), 'proxy with changed idAttribute is new');
   });
 
+  //////// .collection property
+
+  test('setting the collection property on proxy should have no effect on model URL', 1, function () {
+    var collection = new Backbone.Collection();
+    collection.url = 'some/stuff';
+
+    proxy.set({ id: 'yolo' });
+    proxy.collection = collection;
+
+    throws(function () {
+      proxy.url();
+    });
+  });
+
+  test('setting the collection property on proxied should determine the model URL', 1, function () {
+    var collection = new Backbone.Collection();
+    collection.url = 'some/stuff';
+
+    proxy.set({ id: 'yolo' });
+    proxied.collection = collection;
+
+    strictEqual(proxy.url(), 'some/stuff/yolo');
+  });
+
   //////// .parse() method
 
   test('setting the parse() method on proxy should not parse response', function () {
@@ -179,7 +203,6 @@
 
   // TODO:
 
-  //////// .collection property
   //////// .toJSON() method
   //////// .validate() method
   //////// .parse() method
