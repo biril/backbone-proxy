@@ -1,4 +1,4 @@
-/*global Backbone, _, BackboneProxy, QUnit, test, strictEqual, ok, throws */
+/*global Backbone, _, BackboneProxy, QUnit, test, strictEqual, deepEqual, ok, throws */
 (function () {
   'use strict';
 
@@ -218,6 +218,35 @@
   });
 
 
-  // TODO: .toJSON() method / .validate() method
+  //////// .toJSON() method
+
+  test('setting the toJSON() method on proxy should not affect serialized data for sync', 1, function () {
+    Backbone.ajax = function (settings) {
+      deepEqual(JSON.parse(settings.data), { name: 'Anna' });
+    };
+    proxy.toJSON = function () {
+      return 'isSetByToJSON';
+    };
+    proxied.urlRoot = 'some/stuff';
+    proxy.save();
+  });
+
+  test('setting the toJSON() method on proxied should determine serialized data for sync', 1, function () {
+    Backbone.ajax = function (settings) {
+      strictEqual(JSON.parse(settings.data), 'isSetByToJSON');
+    };
+    proxied.toJSON = function () {
+      return 'isSetByToJSON';
+    };
+    proxied.urlRoot = 'some/stuff';
+    proxy.save();
+  });
+
+  test('setting the toJSON() method on proxied should determine JSON representation of proxy', 1, function () {
+    proxied.toJSON = function () {
+      return 'isSetByToJSON';
+    };
+    strictEqual(JSON.stringify(proxy), '"isSetByToJSON"');
+  });
 
 }());
