@@ -13,7 +13,7 @@
   'use strict';
 
   // A global `define` method with an `amd` property signifies the presence of an AMD loader
-  //  (require.js, curl.js)
+  //  (e.g. require.js, curl.js)
   if (typeof define === 'function' && define.amd) {
     return define(['underscore', 'backbone', 'exports'], function (_, Backbone, exports) {
       return createModule(exports, _, Backbone);
@@ -28,8 +28,8 @@
 
   // Otherwise we assume running in a browser - no AMD loader:
 
-  // Save a reference to previous value of `BackboneProxy` before (potentially) overwriting it -
-  //  so that it can be restored on `noConflict`
+  // Save a reference to previous value of `BackboneProxy` before overwriting it - so that it can
+  //  be restored on `noConflict`
   var previousBackboneProxy = root.BackboneProxy;
 
   createModule(root.BackboneProxy = {}, _, Backbone);
@@ -60,10 +60,9 @@
 
 
     // ### SubscriptionCollection
-    // A collection of subscriptions, where each subscription is a
-    //  `<event, callback, context, proxyCallback>` 4-tuple. Every `EventEngine` instance maintains
-    //  a `SubscriptionCollection` instance to keep track of registered callbacks and the mapping
-    //  of each of those to a _proxy_-callback
+    // A collection of subscriptions, where each is a `<event, callback, context, proxyCallback>`
+    //  4-tuple. Every `EventEngine` instance maintains a `SubscriptionCollection` instance to
+    //  keep track of registered callbacks and their mapping to _proxy_-callbacks
 
     //
     SubscriptionCollection = (function () {
@@ -79,6 +78,7 @@
             this._items[i].keep = this._items[i][propName] !== propValue;
           }
         },
+        // Store subscription of given attributes
         store: function (event, callback, context, proxyCallback) {
           this._items.push({
             event: event,
@@ -87,6 +87,10 @@
             proxyCallback: proxyCallback
           });
         },
+        // Unstore subscriptions that match given `event` / `callback` / `context`. None of the
+        //  params denote mandatory arguments and those given will be used to _filter_ the
+        //  subscriptions to be removed - invoking without any arguments will remove _all_
+        //  subscriptions. This behaviour is in line with that of `Backbone.Model#off`
         unstore: function (event, callback, context) {
           var itemsUnstored = [], itemsKept = [];
 
@@ -112,9 +116,9 @@
 
     // ### Event Engine
     // A module that builds on top of `Backbone.Events` to support invoking registered callbacks in
-    //  response to events triggered on a given `proxied` model. Every `ModelProxyProto` instance,
-    //  i.e. every prototype of a created Proxy contains an event engine to facilitate forwarding
-    //  of events from proxied to proxy
+    //  response to events triggered on a given `proxied`, on behalf of a given `proxy`. Every
+    //  `ModelProxyProto` instance (i.e. every prototype of a created Proxy) contains an event
+    //  engine to facilitate forwarding events from proxied to proxy
 
     //
     EventEngine = (function () {
@@ -306,11 +310,13 @@
 
 
   // ### BackboneProxy
+  // The BackboneProxy module. Features a single `extend` method by means of which proxy 'classes'
+  //  are created: `RecordProxy = BackboneProxy.extend(record);`. Proxy classes may be
+  //  instantiated into proxies: `recordProxy = new RecordProxy();`
 
-  // Features a single `extend` method
+  // Return the BackboneProxy module
   return _(BackboneProxy).extend({
 
-    // Get a Proxy 'class' for given `proxied` model
     extend: function (proxied) {
       var ctor, ModelProxyProto;
 
@@ -321,5 +327,7 @@
       ctor.prototype = new ModelProxyProto();
       return ctor;
     }
+
   });
+
 }));
