@@ -32,10 +32,11 @@
   //  be restored on `noConflict`
   var previousBackboneProxy = root.BackboneProxy;
 
+  // Create the BackboneProxy module, attaching `BackboneProxy` to global scope
   createModule(root.BackboneProxy = {}, _, Backbone);
 
-  // The `noConflict` method sets the `BackboneProxy` _global_ to to its previous value (_once_),
-  //  returning a reference to `BackboneProxy` (_always_)
+  // And add the `noConflict` method. This sets the `BackboneProxy` _global_ to to its previous
+  //  value (_once_), returning a reference to `BackboneProxy` (_always_)
   root.BackboneProxy.noConflict = function () {
     var BackboneProxy = root.BackboneProxy;
     root.BackboneProxy = previousBackboneProxy;
@@ -50,10 +51,12 @@
 
   var
 
+    // Model built-in events. Note that 'all' is not considered to be one of them
     builtInEventNames = [
       'add', 'remove', 'reset', 'change', 'destroy', 'request', 'sync', 'error', 'invalid'
     ],
 
+    // Names of 'event API' (`Backbone.Event`) methods
     eventApiMethodNames = [
       'on', 'off', 'trigger', 'once', 'listenTo', 'stopListening', 'listenToOnce'
     ],
@@ -88,8 +91,8 @@
         },
         // Unstore subscriptions that match given `event` / `callback` / `context`. None of the
         //  params denote mandatory arguments and those given will be used to _filter_ the
-        //  subscriptions to be removed - invoking without any arguments will remove _all_
-        //  subscriptions. This behaviour is in line with that of `Backbone.Model#off`
+        //  subscriptions to be removed. Invoking the method without any arguments will remove
+        //  _all_ subscriptions. This behaviour is in line with that of `Backbone.Model#off`
         unstore: function (event, callback, context) {
           var itemsUnstored = [], itemsKept = [];
 
@@ -116,8 +119,8 @@
     // ### Event Engine
     // A module that builds on top of `Backbone.Events` to support invoking registered callbacks in
     //  response to events triggered on a given `proxied`, on behalf of a given `proxy`. Every
-    //  `ModelProxyProto` instance (i.e. every prototype of a created Proxy) contains an event
-    //  engine to facilitate forwarding events from proxied to proxy
+    //  `ModelProxyProto` instance (i.e. every `Proxy.prototype`) contains an Event Engine to
+    //  facilitate forwarding events from proxied to proxy
 
     //
     EventEngine = (function () {
@@ -132,6 +135,7 @@
 
       EventEngine.prototype = _({}).extend(Backbone.Events, {
 
+        // Get a value indicating whether there's currently _any_ listeners registered on the engine
         _hasEvents: function () {
           for (var key in this._events) {
             if (this._events.hasOwnProperty(key)) {
@@ -141,6 +145,8 @@
           return false;
         },
 
+        // Listen or stop listening for the 'all' event on `proxied` depending on whether there's
+        //  currently _any_ listeners registered on the event engine (equivalently, on the proxy)
         _manageSubscriptionToProxied: function () {
           var hasEvents = this._hasEvents();
           if (this._isListeningToProxied !== hasEvents) {
@@ -155,21 +161,20 @@
           }
         },
 
-        // For any given subscription (that is defined by specified `event`, `callback` and
-        //  `context`), create a _proxy-callback_ - a callback that will be invoked by by
-        //  Backbone's Event module in place of the original caller-provided callback. The
-        //  proxy-callback will take care of appropriately setting `model` arguments that may be
-        //  present (in the case of model built-in events) as well as the context (if it's not
-        //  explicitly set by the caller)
+        // For any given subscription (defined by `event` / `callback` / `context`), create a
+        //  _proxy-callback_ - a callback that will be invoked by by Backbone's Event module in
+        //  place of the original caller-provided callback. Depending on the type of the event the
+        //  given subscription refers to, the proxy-callback will take care of appropriately
+        //  setting `model` arguments that may be present (when dealing with model built-in events)
+        //  as well as the context (if it's not explicitly set by the caller)
         _createProxyCallback: function (event, callback, context) {
 
-          // The context is the one that's already provided or forced to the proxy
+          // The context is the one that's already specified _or_ set to the proxy
           context || (context = this._proxy);
 
           // If the subscription is for a model built-in event, the proxy-callback will have to
           //  replace the model argument with the proxy (as Backbone's Event module will set it to
-          //  the proxied when invoking the callback). Same goes for the context in the case that
-          //  it wasn't explicitly set by the caller
+          //  the proxied when invoking the callback). Same goes for the context
           if (_(builtInEventNames).contains(event) || !event.indexOf('change:')) {
             return function () {
               arguments[0] = this._proxy;
@@ -177,20 +182,20 @@
             };
           }
 
-          // The subscription doesn't concern a built-in event. If additionally it's not for the
-          //  'all' event, then we're dealing with a user-defined event. In this case we'll only
-          //  have to make sure that the callback is invoked with proxy as the context
+          // So the subscription doesn't concern a built-in event. If additionally it's not for the
+          //  'all' event, then we're dealing with a user-defined event. In this case we only have
+          //  to make sure that the callback is invoked the appropriate context
           if (event !== 'all') {
             return function () {
               callback.apply(context, arguments);
             };
           }
 
-          // The subscription is for the 'all' event. The callback will run for built-in events as
-          //  well as arbitrary user defined events. We'll have to check the type of the event at
-          //  callback-invocation-time and treat it as one of the two preceding cases. (And yes, if
-          //  client-code decides to trigger() an event which is named like a built-in but doesn't
-          //  carry the expected parameters, things will go sideways)
+          // So The subscription is for the 'all' event: The given callback will run for built-in
+          //  events as well as arbitrary, user-defined events. We'll have to check the type of the
+          //  event at callback-invocation-time and treat it as one of the two cases. (And yes, if
+          //  client-code decides to `trigger()` an event which is named like a built-in but
+          //  doesn't carry the expected parameters, things will go sideways)
           return function (event) {
             if (_(builtInEventNames).contains(event) || !event.indexOf('change:')) {
               arguments[1] = this._proxy;
@@ -220,14 +225,17 @@
 
 
     // ### Model Proxy Prototype
-    // The prototype of Proxy, per given `proxied` model. Exposes a number of 'tweaked'
-    //  `Backbone.Model` methods which ultimately delegate to `proxied`
+    // The prototype of Proxy, _per given `proxied` model_. Overrides certain `Backbone.Model`
+    //  methods ultimately delegating to the implementations of the given `proxied`
 
-    // Create a prototype for Proxy of given `proxied` model
+    // Create a prototype for Proxy, given a `proxied` model
     createModelProxyProtoForProxied = function (proxied) {
 
       function ModelProxyProto() {
         var createPersistenceMethod;
+
+        // #### Prototype's event API methods - they all delegate to the internal Event Engine
+        // e.g. `on`, `off`
 
         //
         _(eventApiMethodNames).each(function (methodName) {
@@ -238,8 +246,8 @@
         }, this);
 
 
-        // #### Methods that should always be invoked with `this` set to `proxied`
-        // e.g `set`
+        // #### Prototype's methods that should always be invoked with `this` set to `proxied`
+        // e.g. `set`
 
         // This ensures that
         //
@@ -267,7 +275,7 @@
         };
 
 
-        // #### Persistence methods
+        // #### Prototype's persistence methods
         // i.e. `fetch`, `save` & `destroy`
 
         // Create persistence method of `methodName`, where `isWithAttributes` indicates whether
@@ -305,9 +313,9 @@
 
 
   // ### BackboneProxy
-  // The BackboneProxy module. Features a single `extend` method by means of which proxy 'classes'
-  //  are created: `RecordProxy = BackboneProxy.extend(record);`. Proxy classes may be
-  //  instantiated into proxies: `recordProxy = new RecordProxy();`
+  // The BackboneProxy module. Features a single `extend` method by means of which a proxy 'class'
+  //  `Proxy` may be created. E.g `UserProxy = BackboneProxy.extend(user)`. Proxy classes may be
+  //  instantiated into proxies, e.g. `user = new UserProxy()`
 
   // Return the BackboneProxy module
   return _(BackboneProxy).extend({
