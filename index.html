@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>backbone-proxy.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>backbone-proxy.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <pre><code>Backbone Proxy v0<span class="hljs-number">.1</span><span class="hljs-number">.0</span>
+
+https:<span class="hljs-comment">//github.com/biril/backbone-proxy</span>
+Licensed and freely distributed under the MIT License
+Copyright (c) <span class="hljs-number">2014</span> Alex Lambiris
+</code></pre>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+<span class="hljs-comment">/*globals exports, define, require, _, Backbone */</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <h2 id="detect-env-export-module">Detect env &amp; export module</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(root, createModule)</span> </span>{
+<span class="hljs-pi">  'use strict'</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>A global <code>define</code> method with an <code>amd</code> property signifies the presence of an AMD loader
+ (e.g. require.js, curl.js)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> define === <span class="hljs-string">'function'</span> &amp;&amp; define.amd) {
+    <span class="hljs-keyword">return</span> define([<span class="hljs-string">'underscore'</span>, <span class="hljs-string">'backbone'</span>, <span class="hljs-string">'exports'</span>], <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(_, Backbone, exports)</span> </span>{
+      <span class="hljs-keyword">return</span> createModule(exports, _, Backbone);
+    });
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>A global <code>exports</code> object signifies CommonJS-like enviroments that support <code>module.exports</code>,
+ e.g. Node</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> exports === <span class="hljs-string">'object'</span>) {
+    <span class="hljs-keyword">return</span> createModule(exports, <span class="hljs-built_in">require</span>(<span class="hljs-string">'underscore'</span>), <span class="hljs-built_in">require</span>(<span class="hljs-string">'backbone'</span>));
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>Otherwise we assume running in a browser - no AMD loader:</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>Save a reference to previous value of <code>BackboneProxy</code> before overwriting it - so that it can
+ be restored on <code>noConflict</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> previousBackboneProxy = root.BackboneProxy;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>Create the BackboneProxy module, attaching <code>BackboneProxy</code> to global scope</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  createModule(root.BackboneProxy = {}, _, Backbone);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>And add the <code>noConflict</code> method. This sets the <code>BackboneProxy</code> <em>global</em> to to its previous
+ value (<em>once</em>), returning a reference to <code>BackboneProxy</code> (<em>always</em>)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  root.BackboneProxy.noConflict = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+    <span class="hljs-keyword">var</span> BackboneProxy = root.BackboneProxy;
+    root.BackboneProxy = previousBackboneProxy;
+    <span class="hljs-keyword">return</span> (BackboneProxy.noConflict = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{ <span class="hljs-keyword">return</span> BackboneProxy; }).call();
+  };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <h2 id="create-module">Create module</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+}(<span class="hljs-keyword">this</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(BackboneProxy, _, Backbone)</span> </span>{
+<span class="hljs-pi">  'use strict'</span>;
+
+  <span class="hljs-keyword">var</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p>Model built-in events. Note that ‘all’ is not considered to be one of them</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    builtInEventNames = [
+      <span class="hljs-string">'add'</span>, <span class="hljs-string">'remove'</span>, <span class="hljs-string">'reset'</span>, <span class="hljs-string">'change'</span>, <span class="hljs-string">'destroy'</span>, <span class="hljs-string">'request'</span>, <span class="hljs-string">'sync'</span>, <span class="hljs-string">'error'</span>, <span class="hljs-string">'invalid'</span>
+    ],</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p>Names of ‘event API’ (<code>Backbone.Event</code>) methods</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    eventApiMethodNames = [
+      <span class="hljs-string">'on'</span>, <span class="hljs-string">'off'</span>, <span class="hljs-string">'trigger'</span>, <span class="hljs-string">'once'</span>, <span class="hljs-string">'listenTo'</span>, <span class="hljs-string">'stopListening'</span>, <span class="hljs-string">'listenToOnce'</span>
+    ],</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <h3 id="subscriptioncollection">SubscriptionCollection</h3>
+<p>A collection of subscriptions, where each is a <code>&lt;event, callback, context, proxyCallback&gt;</code>
+ 4-tuple. Every <code>EventEngine</code> instance maintains a <code>SubscriptionCollection</code> instance to
+ keep track of registered callbacks and their mapping to <em>proxy</em>-callbacks</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    SubscriptionCollection = (<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+
+      <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">SubscriptionCollection</span> <span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">this</span>._items = [];
+      }
+
+      SubscriptionCollection.prototype = {
+        _markToKeep: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(propName, propValue)</span> </span>{
+          <span class="hljs-keyword">if</span> (!propValue) { <span class="hljs-keyword">return</span>; }
+          <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-keyword">this</span>._items.length - <span class="hljs-number">1</span>; i &gt;= <span class="hljs-number">0</span>; --i) {
+            <span class="hljs-keyword">this</span>._items[i].keep = <span class="hljs-keyword">this</span>._items[i][propName] !== propValue;
+          }
+        },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <p>Store subscription of given attributes</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        store: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(event, callback, context, proxyCallback)</span> </span>{
+          <span class="hljs-keyword">this</span>._items.push({
+            event: event,
+            callback: callback,
+            context: context,
+            proxyCallback: proxyCallback
+          });
+        },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <p>Unstore subscriptions that match given <code>event</code> / <code>callback</code> / <code>context</code>. None of the
+ params denote mandatory arguments and those given will be used to <em>filter</em> the
+ subscriptions to be removed. Invoking the method without any arguments will remove
+ <em>all</em> subscriptions. This behaviour is in line with that of <code>Backbone.Model#off</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        unstore: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(event, callback, context)</span> </span>{
+          <span class="hljs-keyword">var</span> itemsUnstored = [], itemsKept = [];
+
+          _(<span class="hljs-keyword">this</span>._items).each(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(item)</span> </span>{ item.keep = <span class="hljs-literal">false</span>; });
+
+          <span class="hljs-keyword">this</span>._markToKeep(<span class="hljs-string">'event'</span>, event);
+          <span class="hljs-keyword">this</span>._markToKeep(<span class="hljs-string">'callback'</span>, callback);
+          <span class="hljs-keyword">this</span>._markToKeep(<span class="hljs-string">'context'</span>, context);
+
+          <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-keyword">this</span>._items.length - <span class="hljs-number">1</span>; i &gt;= <span class="hljs-number">0</span>; --i) {
+            (<span class="hljs-keyword">this</span>._items[i].keep ? itemsKept : itemsUnstored).push(<span class="hljs-keyword">this</span>._items[i]);
+          }
+
+          <span class="hljs-keyword">this</span>._items = itemsKept;
+
+          <span class="hljs-keyword">return</span> itemsUnstored;
+        }
+      };
+
+      <span class="hljs-keyword">return</span> SubscriptionCollection;
+    }()),</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <h3 id="event-engine">Event Engine</h3>
+<p>A module that builds on top of <code>Backbone.Events</code> to support invoking registered callbacks in
+ response to events triggered on a given <code>proxied</code>, on behalf of a given <code>proxy</code>. Every
+ <code>ModelProxyProto</code> instance (i.e. every <code>Proxy.prototype</code>) contains an Event Engine to
+ facilitate forwarding events from proxied to proxy</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    EventEngine = (<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+
+      <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">EventEngine</span><span class="hljs-params">(proxy, proxied)</span> </span>{
+        <span class="hljs-keyword">this</span>._proxy = proxy;
+        <span class="hljs-keyword">this</span>._proxied = proxied;
+        <span class="hljs-keyword">this</span>._subscriptions = <span class="hljs-keyword">new</span> SubscriptionCollection();
+        <span class="hljs-keyword">this</span>._isListeningToProxied = <span class="hljs-literal">false</span>;
+        <span class="hljs-keyword">this</span>._markerContext = {};
+      }
+
+      EventEngine.prototype = _({}).extend(Backbone.Events, {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <p>Get a value indicating whether there’s currently <em>any</em> listeners registered on the engine</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        _hasEvents: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+          <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> key <span class="hljs-keyword">in</span> <span class="hljs-keyword">this</span>._events) {
+            <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>._events.hasOwnProperty(key)) {
+              <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+            }
+          }
+          <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+        },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              <p>Listen or stop listening for the ‘all’ event on <code>proxied</code> depending on whether there’s
+ currently <em>any</em> listeners registered on the event engine (equivalently, on the proxy)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        _manageSubscriptionToProxied: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+          <span class="hljs-keyword">var</span> hasEvents = <span class="hljs-keyword">this</span>._hasEvents();
+          <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>._isListeningToProxied !== hasEvents) {
+            <span class="hljs-keyword">if</span> (hasEvents) {
+              <span class="hljs-keyword">this</span>._proxied.on(<span class="hljs-string">'all'</span>, _.bind(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+                Backbone.Events.trigger.apply(<span class="hljs-keyword">this</span>, <span class="hljs-built_in">arguments</span>);
+              }, <span class="hljs-keyword">this</span>), <span class="hljs-keyword">this</span>._markerContext);
+            } <span class="hljs-keyword">else</span> {
+              <span class="hljs-keyword">this</span>._proxied.off(<span class="hljs-literal">null</span>, <span class="hljs-literal">null</span>, <span class="hljs-keyword">this</span>._markerContext);
+            }
+            <span class="hljs-keyword">this</span>._isListeningToProxied = hasEvents;
+          }
+        },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-22">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <p>For any given subscription (defined by <code>event</code> / <code>callback</code> / <code>context</code>), create a
+ <em>proxy-callback</em> - a callback that will be invoked by by Backbone’s Event module in
+ place of the original caller-provided callback. Depending on the type of the event the
+ given subscription refers to, the proxy-callback will take care of appropriately
+ setting <code>model</code> arguments that may be present (when dealing with model built-in events)
+ as well as the context (if it’s not explicitly set by the caller)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        _createProxyCallback: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(event, callback, context)</span> </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-23">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <p>The context is the one that’s already specified <em>or</em> set to the proxy</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          context || (context = <span class="hljs-keyword">this</span>._proxy);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <p>If the subscription is for a model built-in event, the proxy-callback will have to
+ replace the model argument with the proxy (as Backbone’s Event module will set it to
+ the proxied when invoking the callback). Same goes for the context</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          <span class="hljs-keyword">if</span> (_(builtInEventNames).contains(event) || !event.indexOf(<span class="hljs-string">'change:'</span>)) {
+            <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+              <span class="hljs-built_in">arguments</span>[<span class="hljs-number">0</span>] = <span class="hljs-keyword">this</span>._proxy;
+              callback.apply(context, <span class="hljs-built_in">arguments</span>);
+            };
+          }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-25">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-25">&#182;</a>
+              </div>
+              <p>So the subscription doesn’t concern a built-in event. If additionally it’s not for the
+ ‘all’ event, then we’re dealing with a user-defined event. In this case we only have
+ to make sure that the callback is invoked the appropriate context</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          <span class="hljs-keyword">if</span> (event !== <span class="hljs-string">'all'</span>) {
+            <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+              callback.apply(context, <span class="hljs-built_in">arguments</span>);
+            };
+          }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-26">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-26">&#182;</a>
+              </div>
+              <p>So The subscription is for the ‘all’ event: The given callback will run for built-in
+ events as well as arbitrary, user-defined events. We’ll have to check the type of the
+ event at callback-invocation-time and treat it as one of the two cases. (And yes, if
+ client-code decides to <code>trigger()</code> an event which is named like a built-in but
+ doesn’t carry the expected parameters, things will go sideways)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(event)</span> </span>{
+            <span class="hljs-keyword">if</span> (_(builtInEventNames).contains(event) || !event.indexOf(<span class="hljs-string">'change:'</span>)) {
+              <span class="hljs-built_in">arguments</span>[<span class="hljs-number">1</span>] = <span class="hljs-keyword">this</span>._proxy;
+            }
+            callback.apply(context, <span class="hljs-built_in">arguments</span>);
+          };
+        },
+
+        on: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(event, callback, context)</span> </span>{
+          <span class="hljs-keyword">var</span> proxyCallback = <span class="hljs-keyword">this</span>._createProxyCallback(event, callback, context);
+          <span class="hljs-keyword">this</span>._subscriptions.store(event, callback, context, proxyCallback);
+          Backbone.Events.on.call(<span class="hljs-keyword">this</span>, event, proxyCallback, context);
+          <span class="hljs-keyword">this</span>._manageSubscriptionToProxied();
+        },
+
+        off: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(event, callback, context)</span> </span>{
+          <span class="hljs-keyword">var</span> matchingSubscriptions = <span class="hljs-keyword">this</span>._subscriptions.unstore(event, callback, context);
+          _(matchingSubscriptions).each(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(subscription)</span> </span>{
+            Backbone.Events.off.call(<span class="hljs-keyword">this</span>, subscription.event, subscription.proxyCallback, subscription.context);
+          }, <span class="hljs-keyword">this</span>);
+          <span class="hljs-keyword">this</span>._manageSubscriptionToProxied();
+        }
+      });
+
+      <span class="hljs-keyword">return</span> EventEngine;
+    }()),</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-27">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-27">&#182;</a>
+              </div>
+              <h3 id="model-proxy-prototype">Model Proxy Prototype</h3>
+<p>The prototype of Proxy, <em>per given <code>proxied</code> model</em>. Overrides certain <code>Backbone.Model</code>
+ methods ultimately delegating to the implementations of the given <code>proxied</code></p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-28">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-28">&#182;</a>
+              </div>
+              <p>Create a prototype for Proxy, given a <code>proxied</code> model</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    createModelProxyProtoForProxied = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(proxied)</span> </span>{
+
+      <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">ModelProxyProto</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">var</span> createPersistenceMethod;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-29">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-29">&#182;</a>
+              </div>
+              <h4 id="prototype-s-event-api-methods-they-all-delegate-to-the-internal-event-engine">Prototype’s event API methods - they all delegate to the internal Event Engine</h4>
+<p>e.g. <code>on</code>, <code>off</code></p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-30">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-30">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        _(eventApiMethodNames).each(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(methodName)</span> </span>{
+          <span class="hljs-keyword">this</span>[methodName] = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+            <span class="hljs-keyword">this</span>._eventEngine[methodName].apply(<span class="hljs-keyword">this</span>._eventEngine, <span class="hljs-built_in">arguments</span>);
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+          };
+        }, <span class="hljs-keyword">this</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-31">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-31">&#182;</a>
+              </div>
+              <h4 id="prototype-s-methods-that-should-always-be-invoked-with-this-set-to-proxied-">Prototype’s methods that should always be invoked with <code>this</code> set to <code>proxied</code></h4>
+<p>e.g. <code>set</code></p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-32">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-32">&#182;</a>
+              </div>
+              <p>This ensures that</p>
+<ul>
+<li>all other model methods in the call-graph of the invoked method (e.g. <code>proxied.set</code>)
+ are also invoked with <code>this</code> set to <code>proxied</code>.</li>
+<li>all properties which may be set on the model as part of the invoked method’s code
+ path are set on <code>proxied</code></li>
+</ul>
+<p>For example, this ensures that the <code>model</code> parameter made available to event listeners
+ attached to <code>proxied</code> will be <code>proxied</code> - not <code>proxy</code> (which would otherwise be the
+ case). In terms of set properties, consider <code>validationError</code> which also needs to be
+ set on <code>proxied</code> - not <code>proxy</code>.</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-33">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-33">&#182;</a>
+              </div>
+              <p>Generally, we just need to forward to <code>proxied</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        _([<span class="hljs-string">'isNew'</span>, <span class="hljs-string">'url'</span>]).each(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(methodName)</span> </span>{
+          <span class="hljs-keyword">this</span>[methodName] = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+            <span class="hljs-keyword">return</span> proxied[methodName]();
+          };
+        }, <span class="hljs-keyword">this</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-34">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-34">&#182;</a>
+              </div>
+              <p>Specifically, for the case of <code>set</code>, we need to replace the returned reference with
+ <code>this</code>. To get proper chaining</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">this</span>.set = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+          <span class="hljs-keyword">return</span> proxied.set.apply(proxied, <span class="hljs-built_in">arguments</span>) ? <span class="hljs-keyword">this</span> : <span class="hljs-literal">false</span>;
+        };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-35">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-35">&#182;</a>
+              </div>
+              <h4 id="prototype-s-persistence-methods">Prototype’s persistence methods</h4>
+<p>i.e. <code>fetch</code>, <code>save</code> &amp; <code>destroy</code></p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-36">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-36">&#182;</a>
+              </div>
+              <p>Create persistence method of <code>methodName</code>, where <code>isWithAttributes</code> indicates whether
+ the method excepts attributes (<code>save</code>) or just options (<code>fetch</code>, <code>destroy</code>)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        createPersistenceMethod = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(methodName, isWithAttributes)</span> </span>{
+          <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{
+            <span class="hljs-keyword">var</span> opts, success, error, args;
+            opts = <span class="hljs-built_in">arguments</span>[isWithAttributes ? <span class="hljs-number">1</span> : <span class="hljs-number">0</span>];
+            opts = opts ? _.clone(opts) : {};
+            success = opts.success;
+            error = opts.error;
+
+            success &amp;&amp; (opts.success = _.bind(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(model, response, opts)</span> </span>{
+              success(<span class="hljs-keyword">this</span>, response, opts);
+            }, <span class="hljs-keyword">this</span>));
+            error &amp;&amp; (opts.error = _.bind(<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(model, response, opts)</span> </span>{
+              error(<span class="hljs-keyword">this</span>, response, opts);
+            }, <span class="hljs-keyword">this</span>));
+
+            args = isWithAttributes ? [<span class="hljs-built_in">arguments</span>[<span class="hljs-number">0</span>], opts] : [opts];
+            <span class="hljs-keyword">return</span> proxied[methodName].apply(proxied, args);
+          };
+        };
+
+        <span class="hljs-keyword">this</span>.fetch   = createPersistenceMethod(<span class="hljs-string">'fetch'</span>,   <span class="hljs-literal">false</span>);
+        <span class="hljs-keyword">this</span>.destroy = createPersistenceMethod(<span class="hljs-string">'destroy'</span>, <span class="hljs-literal">false</span>);
+        <span class="hljs-keyword">this</span>.save    = createPersistenceMethod(<span class="hljs-string">'save'</span>,    <span class="hljs-literal">true</span>);
+
+        <span class="hljs-keyword">this</span>._proxied = proxied;
+      }
+
+      ModelProxyProto.prototype = proxied;
+      <span class="hljs-keyword">return</span> ModelProxyProto;
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-37">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-37">&#182;</a>
+              </div>
+              <h3 id="backboneproxy">BackboneProxy</h3>
+<p>The BackboneProxy module. Features a single <code>extend</code> method by means of which a proxy ‘class’
+ <code>Proxy</code> may be created. E.g <code>UserProxy = BackboneProxy.extend(user)</code>. Proxy classes may be
+ instantiated into proxies, e.g. <code>user = new UserProxy()</code></p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-38">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-38">&#182;</a>
+              </div>
+              <p>Return the BackboneProxy module</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">return</span> _(BackboneProxy).extend({
+
+    extend: <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(proxied)</span> </span>{
+      <span class="hljs-keyword">var</span> ctor, ModelProxyProto;
+
+      ctor = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">ModelProxy</span><span class="hljs-params">()</span> </span>{
+        <span class="hljs-keyword">this</span>._eventEngine = <span class="hljs-keyword">new</span> EventEngine(<span class="hljs-keyword">this</span>, proxied);
+      };
+      ModelProxyProto = createModelProxyProtoForProxied(proxied);
+      ctor.prototype = <span class="hljs-keyword">new</span> ModelProxyProto();
+      <span class="hljs-keyword">return</span> ctor;
+    }
+
+  });
+
+}));</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>
