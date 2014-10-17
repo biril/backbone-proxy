@@ -1,0 +1,1330 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for backbone-proxy/backbone-proxy.js</title>
+    <meta charset="utf-8">
+
+    <link rel="stylesheet" href="../prettify.css">
+
+    <style>
+        body, html {
+            margin:0; padding: 0;
+        }
+        body {
+            font-family: Helvetica Neue, Helvetica,Arial;
+            font-size: 10pt;
+        }
+        div.header, div.footer {
+            background: #eee;
+            padding: 1em;
+        }
+        div.header {
+            z-index: 100;
+            position: fixed;
+            top: 0;
+            border-bottom: 1px solid #666;
+            width: 100%;
+        }
+        div.footer {
+            border-top: 1px solid #666;
+        }
+        div.body {
+            margin-top: 10em;
+        }
+        div.meta {
+            font-size: 90%;
+            text-align: center;
+        }
+        h1, h2, h3 {
+            font-weight: normal;
+        }
+        h1 {
+            font-size: 12pt;
+        }
+        h2 {
+            font-size: 10pt;
+        }
+        pre {
+            font-family: Consolas, Menlo, Monaco, monospace;
+            margin: 0;
+            padding: 0;
+            line-height: 14px;
+            font-size: 14px;
+            -moz-tab-size: 2;
+            -o-tab-size:  2;
+            tab-size: 2;
+        }
+
+        div.path { font-size: 110%; }
+        div.path a:link, div.path a:visited { color: #000; }
+        table.coverage { border-collapse: collapse; margin:0; padding: 0 }
+
+        table.coverage td {
+            margin: 0;
+            padding: 0;
+            color: #111;
+            vertical-align: top;
+        }
+        table.coverage td.line-count {
+            width: 50px;
+            text-align: right;
+            padding-right: 5px;
+        }
+        table.coverage td.line-coverage {
+            color: #777 !important;
+            text-align: right;
+            border-left: 1px solid #666;
+            border-right: 1px solid #666;
+        }
+
+        table.coverage td.text {
+        }
+
+        table.coverage td span.cline-any {
+            display: inline-block;
+            padding: 0 5px;
+            width: 40px;
+        }
+        table.coverage td span.cline-neutral {
+            background: #eee;
+        }
+        table.coverage td span.cline-yes {
+            background: #b5d592;
+            color: #999;
+        }
+        table.coverage td span.cline-no {
+            background: #fc8c84;
+        }
+
+        .cstat-yes { color: #111; }
+        .cstat-no { background: #fc8c84; color: #111; }
+        .fstat-no { background: #ffc520; color: #111 !important; }
+        .cbranch-no { background:  yellow !important; color: #111; }
+
+        .cstat-skip { background: #ddd; color: #111; }
+        .fstat-skip { background: #ddd; color: #111 !important; }
+        .cbranch-skip { background: #ddd !important; color: #111; }
+
+        .missing-if-branch {
+            display: inline-block;
+            margin-right: 10px;
+            position: relative;
+            padding: 0 4px;
+            background: black;
+            color: yellow;
+        }
+
+        .skip-if-branch {
+            display: none;
+            margin-right: 10px;
+            position: relative;
+            padding: 0 4px;
+            background: #ccc;
+            color: white;
+        }
+
+        .missing-if-branch .typ, .skip-if-branch .typ {
+            color: inherit !important;
+        }
+
+        .entity, .metric { font-weight: bold; }
+        .metric { display: inline-block; border: 1px solid #333; padding: 0.3em; background: white; }
+        .metric small { font-size: 80%; font-weight: normal; color: #666; }
+
+        div.coverage-summary table { border-collapse: collapse; margin: 3em; font-size: 110%; }
+        div.coverage-summary td, div.coverage-summary table  th { margin: 0; padding: 0.25em 1em; border-top: 1px solid #666; border-bottom: 1px solid #666; }
+        div.coverage-summary th { text-align: left; border: 1px solid #666; background: #eee; font-weight: normal; }
+        div.coverage-summary th.file { border-right: none !important; }
+        div.coverage-summary th.pic { border-left: none !important; text-align: right; }
+        div.coverage-summary th.pct { border-right: none !important; }
+        div.coverage-summary th.abs { border-left: none !important; text-align: right; }
+        div.coverage-summary td.pct { text-align: right; border-left: 1px solid #666; }
+        div.coverage-summary td.abs { text-align: right; font-size: 90%; color: #444; border-right: 1px solid #666; }
+        div.coverage-summary td.file { text-align: right; border-left: 1px solid #666; white-space: nowrap;  }
+        div.coverage-summary td.pic { min-width: 120px !important;  }
+        div.coverage-summary a:link { text-decoration: none; color: #000; }
+        div.coverage-summary a:visited { text-decoration: none; color: #333; }
+        div.coverage-summary a:hover { text-decoration: underline; }
+        div.coverage-summary tfoot td { border-top: 1px solid #666; }
+
+        div.coverage-summary .yui3-datatable-sort-indicator, div.coverage-summary .dummy-sort-indicator {
+            height: 10px;
+            width: 7px;
+            display: inline-block;
+            margin-left: 0.5em;
+        }
+        div.coverage-summary .yui3-datatable-sort-indicator {
+            background: url("http://yui.yahooapis.com/3.6.0/build/datatable-sort/assets/skins/sam/sort-arrow-sprite.png") no-repeat scroll 0 0 transparent;
+        }
+        div.coverage-summary .yui3-datatable-sorted .yui3-datatable-sort-indicator {
+            background-position: 0 -20px;
+        }
+        div.coverage-summary .yui3-datatable-sorted-desc .yui3-datatable-sort-indicator {
+            background-position: 0 -10px;
+        }
+
+        .high { background: #b5d592 !important; }
+        .medium { background: #ffe87c !important; }
+        .low { background: #fc8c84 !important; }
+
+        span.cover-fill, span.cover-empty {
+            display:inline-block;
+            border:1px solid #444;
+            background: white;
+            height: 12px;
+        }
+        span.cover-fill {
+            background: #ccc;
+            border-right: 1px solid #444;
+        }
+        span.cover-empty {
+            background: white;
+            border-left: none;
+        }
+        span.cover-full {
+            border-right: none !important;
+        }
+        pre.prettyprint {
+            border: none !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+        .com { color: #999 !important; }
+        .ignore-none { color: #999; font-weight: normal; }
+
+    </style>
+</head>
+<body>
+<div class="header high">
+    <h1>Code coverage report for <span class="entity">backbone-proxy/backbone-proxy.js</span></h1>
+    <h2>
+        
+        Statements: <span class="metric">90.83% <small>(99 / 109)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        
+        
+        Branches: <span class="metric">87.5% <small>(35 / 40)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        
+        
+        Functions: <span class="metric">88.89% <small>(32 / 36)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        
+        
+        Lines: <span class="metric">91.51% <small>(97 / 106)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        
+        Ignored: <span class="metric"><span class="ignore-none">none</span></span> &nbsp;&nbsp;&nbsp;&nbsp;
+    </h2>
+    <div class="path"><a href="../index.html">All files</a> &#187; <a href="index.html">backbone-proxy/</a> &#187; backbone-proxy.js</div>
+</div>
+<div class="body">
+<pre><table class="coverage">
+<tr><td class="line-count">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292
+293
+294
+295
+296
+297
+298
+299
+300
+301
+302
+303
+304
+305
+306
+307
+308
+309
+310
+311
+312
+313
+314
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333
+334
+335
+336
+337</td><td class="line-coverage"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">4471</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2313</span>
+<span class="cline-any cline-yes">1267</span>
+<span class="cline-any cline-yes">1349</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1680</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">771</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">791</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">771</span>
+<span class="cline-any cline-yes">771</span>
+<span class="cline-any cline-yes">771</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">771</span>
+<span class="cline-any cline-yes">791</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">771</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">771</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">4471</span>
+<span class="cline-any cline-yes">4471</span>
+<span class="cline-any cline-yes">4471</span>
+<span class="cline-any cline-yes">4471</span>
+<span class="cline-any cline-yes">4471</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2451</span>
+<span class="cline-any cline-yes">1752</span>
+<span class="cline-any cline-yes">1752</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">699</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2451</span>
+<span class="cline-any cline-yes">2451</span>
+<span class="cline-any cline-yes">2094</span>
+<span class="cline-any cline-yes">1459</span>
+<span class="cline-any cline-yes">2780</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">635</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2094</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1680</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1680</span>
+<span class="cline-any cline-yes">977</span>
+<span class="cline-any cline-yes">947</span>
+<span class="cline-any cline-yes">947</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">703</span>
+<span class="cline-any cline-yes">31</span>
+<span class="cline-any cline-yes">20</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">672</span>
+<span class="cline-any cline-yes">1150</span>
+<span class="cline-any cline-yes">1128</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1150</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1680</span>
+<span class="cline-any cline-yes">1680</span>
+<span class="cline-any cline-yes">1680</span>
+<span class="cline-any cline-yes">1680</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">771</span>
+<span class="cline-any cline-yes">771</span>
+<span class="cline-any cline-yes">717</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">771</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">3054</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3054</span>
+<span class="cline-any cline-yes">21378</span>
+<span class="cline-any cline-yes">1964</span>
+<span class="cline-any cline-yes">1964</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3054</span>
+<span class="cline-any cline-yes">6108</span>
+<span class="cline-any cline-yes">30</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3054</span>
+<span class="cline-any cline-yes">2084</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3054</span>
+<span class="cline-any cline-yes">9162</span>
+<span class="cline-any cline-yes">54</span>
+<span class="cline-any cline-yes">54</span>
+<span class="cline-any cline-yes">54</span>
+<span class="cline-any cline-yes">54</span>
+<span class="cline-any cline-yes">54</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">54</span>
+<span class="cline-any cline-yes">6</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">54</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">54</span>
+<span class="cline-any cline-yes">54</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3054</span>
+<span class="cline-any cline-yes">3054</span>
+<span class="cline-any cline-yes">3054</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3054</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3054</span>
+<span class="cline-any cline-yes">3054</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3054</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3054</span>
+<span class="cline-any cline-yes">4471</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3054</span>
+<span class="cline-any cline-yes">3054</span>
+<span class="cline-any cline-yes">3054</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">//     Backbone Proxy v0.1.0
+//
+//     https://github.com/biril/backbone-proxy
+//     Licensed and freely distributed under the MIT License
+//     Copyright (c) 2014 Alex Lambiris
+&nbsp;
+/*globals exports, define, require, _, Backbone */
+&nbsp;
+// Detect env &amp; export module
+// --------------------------
+&nbsp;
+(function (root, createModule) {
+  'use strict';
+&nbsp;
+  // A global `define` method with an `amd` property signifies the presence of an AMD loader
+  //  (e.g. require.js, curl.js)
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (typeof define === 'function' &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >define.amd)</span> {
+<span class="cstat-no" title="statement not covered" >    return define(['underscore', 'backbone', 'exports'], <span class="fstat-no" title="function not covered" >function (_, Backbone, exports) {</span></span>
+<span class="cstat-no" title="statement not covered" >      return createModule(exports, _, Backbone);</span>
+    });
+  }
+&nbsp;
+  // A global `exports` object signifies CommonJS-like enviroments that support `module.exports`,
+  //  e.g. Node
+  <span class="missing-if-branch" title="else path not taken" >E</span>if (typeof exports === 'object') {
+    return createModule(exports, require('underscore'), require('backbone'));
+  }
+&nbsp;
+  // Otherwise we assume running in a browser - no AMD loader:
+&nbsp;
+  // Save a reference to previous value of `BackboneProxy` before overwriting it - so that it can
+  //  be restored on `noConflict`
+<span class="cstat-no" title="statement not covered" >  var previousBackboneProxy = root.BackboneProxy;</span>
+&nbsp;
+  // Create the BackboneProxy module, attaching `BackboneProxy` to global scope
+<span class="cstat-no" title="statement not covered" >  createModule(root.BackboneProxy = {}, _, Backbone);</span>
+&nbsp;
+  // And add the `noConflict` method. This sets the `BackboneProxy` _global_ to to its previous
+  //  value (_once_), returning a reference to `BackboneProxy` (_always_)
+<span class="cstat-no" title="statement not covered" >  root.BackboneProxy.noConflict = <span class="fstat-no" title="function not covered" >function () {</span></span>
+<span class="cstat-no" title="statement not covered" >    var BackboneProxy = root.BackboneProxy;</span>
+<span class="cstat-no" title="statement not covered" >    root.BackboneProxy = previousBackboneProxy;</span>
+<span class="cstat-no" title="statement not covered" >    return (BackboneProxy.noConflict = <span class="fstat-no" title="function not covered" >function () {</span> <span class="cstat-no" title="statement not covered" >return BackboneProxy; </span>}).call();</span>
+  };
+&nbsp;
+// Create module
+// -------------
+&nbsp;
+}(this, function (BackboneProxy, _, Backbone) {
+  'use strict';
+&nbsp;
+  var
+&nbsp;
+    // Model built-in events. Note that 'all' is not considered to be one of them
+    builtInEventNames = [
+      'add', 'remove', 'reset', 'change', 'destroy', 'request', 'sync', 'error', 'invalid'
+    ],
+&nbsp;
+    // Names of 'event API' (`Backbone.Event`) methods
+    eventApiMethodNames = [
+      'on', 'off', 'trigger', 'once', 'listenTo', 'stopListening', 'listenToOnce'
+    ],
+&nbsp;
+    // ### SubscriptionCollection
+    // A collection of subscriptions, where each is a `&lt;event, callback, context, proxyCallback&gt;`
+    //  4-tuple. Every `EventEngine` instance maintains a `SubscriptionCollection` instance to
+    //  keep track of registered callbacks and their mapping to _proxy_-callbacks
+&nbsp;
+    //
+    SubscriptionCollection = (function () {
+&nbsp;
+      function SubscriptionCollection () {
+        this._items = [];
+      }
+&nbsp;
+      SubscriptionCollection.prototype = {
+        _markToKeep: function (propName, propValue) {
+          if (!propValue) { return; }
+          for (var i = this._items.length - 1; i &gt;= 0; --i) {
+            this._items[i].keep = this._items[i][propName] !== propValue;
+          }
+        },
+        // Store subscription of given attributes
+        store: function (event, callback, context, proxyCallback) {
+          this._items.push({
+            event: event,
+            callback: callback,
+            context: context,
+            proxyCallback: proxyCallback
+          });
+        },
+        // Unstore subscriptions that match given `event` / `callback` / `context`. None of the
+        //  params denote mandatory arguments and those given will be used to _filter_ the
+        //  subscriptions to be removed. Invoking the method without any arguments will remove
+        //  _all_ subscriptions. This behaviour is in line with that of `Backbone.Model#off`
+        unstore: function (event, callback, context) {
+          var itemsUnstored = [], itemsKept = [];
+&nbsp;
+          _(this._items).each(function (item) { item.keep = false; });
+&nbsp;
+          this._markToKeep('event', event);
+          this._markToKeep('callback', callback);
+          this._markToKeep('context', context);
+&nbsp;
+          for (var i = this._items.length - 1; i &gt;= 0; --i) {
+            (this._items[i].keep ? itemsKept : itemsUnstored).push(this._items[i]);
+          }
+&nbsp;
+          this._items = itemsKept;
+&nbsp;
+          return itemsUnstored;
+        }
+      };
+&nbsp;
+      return SubscriptionCollection;
+    }()),
+&nbsp;
+&nbsp;
+    // ### Event Engine
+    // A module that builds on top of `Backbone.Events` to support invoking registered callbacks in
+    //  response to events triggered on a given `proxied`, on behalf of a given `proxy`. Every
+    //  `ModelProxyProto` instance (i.e. every `Proxy.prototype`) contains an Event Engine to
+    //  facilitate forwarding events from proxied to proxy
+&nbsp;
+    //
+    EventEngine = (function () {
+&nbsp;
+      function EventEngine(proxy, proxied) {
+        this._proxy = proxy;
+        this._proxied = proxied;
+        this._subscriptions = new SubscriptionCollection();
+        this._isListeningToProxied = false;
+        this._markerContext = {};
+      }
+&nbsp;
+      EventEngine.prototype = _({}).extend(Backbone.Events, {
+&nbsp;
+        // Get a value indicating whether there's currently _any_ listeners registered on the engine
+        _hasEvents: function () {
+          for (var key in this._events) {
+            <span class="missing-if-branch" title="else path not taken" >E</span>if (this._events.hasOwnProperty(key)) {
+              return true;
+            }
+          }
+          return false;
+        },
+&nbsp;
+        // Listen or stop listening for the 'all' event on `proxied` depending on whether there's
+        //  currently _any_ listeners registered on the event engine (equivalently, on the proxy)
+        _manageSubscriptionToProxied: function () {
+          var hasEvents = this._hasEvents();
+          if (this._isListeningToProxied !== hasEvents) {
+            if (hasEvents) {
+              this._proxied.on('all', _.bind(function () {
+                Backbone.Events.trigger.apply(this, arguments);
+              }, this), this._markerContext);
+            } else {
+              this._proxied.off(null, null, this._markerContext);
+            }
+            this._isListeningToProxied = hasEvents;
+          }
+        },
+&nbsp;
+        // For any given subscription (defined by `event` / `callback` / `context`), create a
+        //  _proxy-callback_ - a callback that will be invoked by by Backbone's Event module in
+        //  place of the original caller-provided callback. Depending on the type of the event the
+        //  given subscription refers to, the proxy-callback will take care of appropriately
+        //  setting `model` arguments that may be present (when dealing with model built-in events)
+        //  as well as the context (if it's not explicitly set by the caller)
+        _createProxyCallback: function (event, callback, context) {
+&nbsp;
+          // The context is the one that's already specified _or_ set to the proxy
+          context || (context = this._proxy);
+&nbsp;
+          // If the subscription is for a model built-in event, the proxy-callback will have to
+          //  replace the model argument with the proxy (as Backbone's Event module will set it to
+          //  the proxied when invoking the callback). Same goes for the context
+          if (_(builtInEventNames).contains(event) || !event.indexOf('change:')) {
+            return function () {
+              arguments[0] = this._proxy;
+              callback.apply(context, arguments);
+            };
+          }
+&nbsp;
+          // So the subscription doesn't concern a built-in event. If additionally it's not for the
+          //  'all' event, then we're dealing with a user-defined event. In this case we only have
+          //  to make sure that the callback is invoked the appropriate context
+          if (event !== 'all') {
+            return function () {
+              callback.apply(context, arguments);
+            };
+          }
+&nbsp;
+          // So The subscription is for the 'all' event: The given callback will run for built-in
+          //  events as well as arbitrary, user-defined events. We'll have to check the type of the
+          //  event at callback-invocation-time and treat it as one of the two cases. (And yes, if
+          //  client-code decides to `trigger()` an event which is named like a built-in but
+          //  doesn't carry the expected parameters, things will go sideways)
+          return function (event) {
+            if (_(builtInEventNames).contains(event) || !event.indexOf('change:')) {
+              arguments[1] = this._proxy;
+            }
+            callback.apply(context, arguments);
+          };
+        },
+&nbsp;
+        on: function (event, callback, context) {
+          var proxyCallback = this._createProxyCallback(event, callback, context);
+          this._subscriptions.store(event, callback, context, proxyCallback);
+          Backbone.Events.on.call(this, event, proxyCallback, context);
+          this._manageSubscriptionToProxied();
+        },
+&nbsp;
+        off: function (event, callback, context) {
+          var matchingSubscriptions = this._subscriptions.unstore(event, callback, context);
+          _(matchingSubscriptions).each(function (subscription) {
+            Backbone.Events.off.call(this, subscription.event, subscription.proxyCallback, subscription.context);
+          }, this);
+          this._manageSubscriptionToProxied();
+        }
+      });
+&nbsp;
+      return EventEngine;
+    }()),
+&nbsp;
+&nbsp;
+    // ### Model Proxy Prototype
+    // The prototype of Proxy, _per given `proxied` model_. Overrides certain `Backbone.Model`
+    //  methods ultimately delegating to the implementations of the given `proxied`
+&nbsp;
+    // Create a prototype for Proxy, given a `proxied` model
+    createModelProxyProtoForProxied = function (proxied) {
+&nbsp;
+      function ModelProxyProto() {
+        var createPersistenceMethod;
+&nbsp;
+        // #### Prototype's event API methods - they all delegate to the internal Event Engine
+        // e.g. `on`, `off`
+&nbsp;
+        //
+        _(eventApiMethodNames).each(function (methodName) {
+          this[methodName] = function () {
+            this._eventEngine[methodName].apply(this._eventEngine, arguments);
+            return this;
+          };
+        }, this);
+&nbsp;
+&nbsp;
+        // #### Prototype's methods that should always be invoked with `this` set to `proxied`
+        // e.g. `set`
+&nbsp;
+        // This ensures that
+        //
+        //  * all other model methods in the call-graph of the invoked method (e.g. `proxied.set`)
+        //     are also invoked with `this` set to `proxied`.
+        //  * all properties which may be set on the model as part of the invoked method's code
+        //     path are set on `proxied`
+        //
+        // For example, this ensures that the `model` parameter made available to event listeners
+        //  attached to `proxied` will be `proxied` - not `proxy` (which would otherwise be the
+        //  case). In terms of set properties, consider `validationError` which also needs to be
+        //  set on `proxied` - not `proxy`.
+&nbsp;
+        // Generally, we just need to forward to `proxied`
+        _(['isNew', 'url']).each(function (methodName) {
+          this[methodName] = function () {
+            return proxied[methodName]();
+          };
+        }, this);
+&nbsp;
+        // Specifically, for the case of `set`, we need to replace the returned reference with
+        //  `this`. To get proper chaining
+        this.set = function () {
+          return proxied.set.apply(proxied, arguments) ? this : false;
+        };
+&nbsp;
+&nbsp;
+        // #### Prototype's persistence methods
+        // i.e. `fetch`, `save` &amp; `destroy`
+&nbsp;
+        // Create persistence method of `methodName`, where `isWithAttributes` indicates whether
+        //  the method excepts attributes (`save`) or just options (`fetch`, `destroy`)
+        createPersistenceMethod = function (methodName, isWithAttributes) {
+          return function () {
+            var opts, success, error, args;
+            opts = arguments[isWithAttributes ? 1 : 0];
+            opts = opts ? _.clone(opts) : {};
+            success = opts.success;
+            error = opts.error;
+&nbsp;
+            success &amp;&amp; (opts.success = _.bind(function (model, response, opts) {
+              success(this, response, opts);
+            }, this));
+            error &amp;&amp; (<span class="branch-1 cbranch-no" title="branch not covered" >opts.error = _.bind(<span class="fstat-no" title="function not covered" >function (model, response, opts) {</span></span>
+<span class="cstat-no" title="statement not covered" >              error(this, response, opts);</span>
+            }, this));
+&nbsp;
+            args = isWithAttributes ? [arguments[0], opts] : [opts];
+            return proxied[methodName].apply(proxied, args);
+          };
+        };
+&nbsp;
+        this.fetch   = createPersistenceMethod('fetch',   false);
+        this.destroy = createPersistenceMethod('destroy', false);
+        this.save    = createPersistenceMethod('save',    true);
+&nbsp;
+        this._proxied = proxied;
+      }
+&nbsp;
+      ModelProxyProto.prototype = proxied;
+      return ModelProxyProto;
+    };
+&nbsp;
+&nbsp;
+  // ### BackboneProxy
+  // The BackboneProxy module. Features a single `extend` method by means of which a proxy 'class'
+  //  `Proxy` may be created. E.g `UserProxy = BackboneProxy.extend(user)`. Proxy classes may be
+  //  instantiated into proxies, e.g. `user = new UserProxy()`
+&nbsp;
+  // Return the BackboneProxy module
+  return _(BackboneProxy).extend({
+&nbsp;
+    extend: function (proxied) {
+      var ctor, ModelProxyProto;
+&nbsp;
+      ctor = function ModelProxy() {
+        this._eventEngine = new EventEngine(this, proxied);
+      };
+      ModelProxyProto = createModelProxyProtoForProxied(proxied);
+      ctor.prototype = new ModelProxyProto();
+      return ctor;
+    }
+&nbsp;
+  });
+&nbsp;
+}));
+&nbsp;</pre></td></tr>
+</table></pre>
+
+</div>
+<div class="footer">
+    <div class="meta">Generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Fri Oct 17 2014 21:29:53 GMT+0200 (CEST)</div>
+</div>
+
+<script src="../prettify.js"></script>
+
+<script src="http://yui.yahooapis.com/3.6.0/build/yui/yui-min.js"></script>
+<script>
+
+    YUI().use('datatable', function (Y) {
+
+        var formatters = {
+          pct: function (o) {
+              o.className += o.record.get('classes')[o.column.key];
+              try {
+                  return o.value.toFixed(2) + '%';
+              } catch (ex) { return o.value + '%'; }
+          },
+          html: function (o) {
+              o.className += o.record.get('classes')[o.column.key];
+              return o.record.get(o.column.key + '_html');
+          }
+        },
+          defaultFormatter = function (o) {
+              o.className += o.record.get('classes')[o.column.key];
+              return o.value;
+          };
+
+        function getColumns(theadNode) {
+            var colNodes = theadNode.all('tr th'),
+                cols = [],
+                col;
+            colNodes.each(function (colNode) {
+                col = {
+                    key: colNode.getAttribute('data-col'),
+                    label: colNode.get('innerHTML') || ' ',
+                    sortable: !colNode.getAttribute('data-nosort'),
+                    className: colNode.getAttribute('class'),
+                    type: colNode.getAttribute('data-type'),
+                    allowHTML: colNode.getAttribute('data-html') === 'true' || colNode.getAttribute('data-fmt') === 'html'
+                };
+                col.formatter = formatters[colNode.getAttribute('data-fmt')] || defaultFormatter;
+                cols.push(col);
+            });
+            return cols;
+        }
+
+        function getRowData(trNode, cols) {
+            var tdNodes = trNode.all('td'),
+                    i,
+                    row = { classes: {} },
+                    node,
+                    name;
+            for (i = 0; i < cols.length; i += 1) {
+                name = cols[i].key;
+                node = tdNodes.item(i);
+                row[name] = node.getAttribute('data-value') || node.get('innerHTML');
+                row[name + '_html'] = node.get('innerHTML');
+                row.classes[name] = node.getAttribute('class');
+                //Y.log('Name: ' + name + '; Value: ' + row[name]);
+                if (cols[i].type === 'number') { row[name] = row[name] * 1; }
+            }
+            //Y.log(row);
+            return row;
+        }
+
+        function getData(tbodyNode, cols) {
+            var data = [];
+            tbodyNode.all('tr').each(function (trNode) {
+                data.push(getRowData(trNode, cols));
+            });
+            return data;
+        }
+
+        function replaceTable(node) {
+            if (!node) { return; }
+            var cols = getColumns(node.one('thead')),
+                data = getData(node.one('tbody'), cols),
+                table,
+                parent = node.get('parentNode');
+
+            table = new Y.DataTable({
+                columns: cols,
+                data: data,
+                sortBy: 'file'
+            });
+            parent.set('innerHTML', '');
+            table.render(parent);
+        }
+
+        Y.on('domready', function () {
+            replaceTable(Y.one('div.coverage-summary table'));
+            if (typeof prettyPrint === 'function') {
+                prettyPrint();
+            }
+        });
+    });
+</script>
+</body>
+</html>
