@@ -364,17 +364,16 @@ console.log('validation error: ' + (proxy.validationError || 'none'));
 ```
 
 
-Testing / Contributing
-----------------------
+Contributing ( / Testing )
+--------------------------
 
-The QUnit test suite may be run in a browser (test/index.html) or on the command line, by running
+Contributions are obviously appreciated. In lieu of a formal styleguide, take care to maintain the
+existing coding style. Please make sure your changes test out green prior to pull requests. The
+QUnit test suite may be run in a browser (test/index.html) or on the command line, by running
 `make test` or `npm test`. The command line version runs on Node and depends on
 [node-qunit](https://github.com/kof/node-qunit) (`npm install` to fetch it before testing). A
 [coverage report](http://biril.github.io/backbone-proxy/lcov-report/backbone-proxy/backbone-proxy.js.html)
 is also available.
-
-Contributions are obviously appreciated. In lieu of a formal styleguide, take care to maintain the
-existing coding style. Please make sure your changes test out green prior to pull requests.
 
 
 License
