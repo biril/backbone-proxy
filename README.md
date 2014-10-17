@@ -363,6 +363,10 @@ console.log('validation error: ' + (proxy.validationError || 'none'));
 
 ```
 
+Aside from the prior examples, the
+[annotated version of the source](http://biril.github.io/backbone-proxy/) is available as a
+reference.
+
 
 Contributing ( / Testing )
 --------------------------
