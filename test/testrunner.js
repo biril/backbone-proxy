@@ -55,6 +55,7 @@ qunit.run({
     absPath('test-set().js'),
     absPath('test-on().js'),
     absPath('test-once().js'),
+    absPath('test-sync().js'),
     absPath('test-off()-by-event.js'),
     absPath('test-off()-by-callback.js'),
     absPath('test-off()-by-context.js'),
