@@ -69,7 +69,7 @@ user.set('name', 'Mairy');
 ```
 
 
-#### Vew-specific proxies
+#### View-specific proxies
 
 ```javascript
 // Create a UserProxy class
