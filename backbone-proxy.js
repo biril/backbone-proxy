@@ -2,7 +2,7 @@
 //
 //     https://github.com/biril/backbone-proxy
 //     Licensed and freely distributed under the MIT License
-//     Copyright (c) 2014 Alex Lambiris
+//     Copyright (c) 2014-2015 Alex Lambiris
 
 /*globals exports, define, require, _, Backbone */
 
