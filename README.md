@@ -119,7 +119,7 @@ Set up
 ------
 
 * install with bower, `bower install backbone-proxy`,
-* install with npm, `npm install backbone-proxy_` or
+* install with npm, `npm install backbone-proxy_` (please note the intentional underscore) or
 * just include the
     [latest stable `backbone-proxy.js`](https://github.com/biril/backbone-proxy/releases).
 
@@ -385,4 +385,4 @@ License
 
 Licensed and freely distributed under the MIT License (LICENSE.txt).
 
-Copyright (c) 2014 Alex Lambiris
+Copyright (c) 2014-2015 Alex Lambiris
